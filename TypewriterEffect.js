@@ -3,15 +3,15 @@ const phrases = ['There are too many people using it now, please wait. If waitin
 let i =0;
 let j =0;
 let currentPhrases = [];
-function loop(){
+let delay = 0;
+function loop(){ //the loop for type effect
 
-    textDisplay.innerHTML = currentPhrases.join('');
+    textDisplay.innerHTML = currentPhrases.join(''); //put in space
     if (i < phrases.length){
 
         if (j < phrases[i].length){
-
             currentPhrases.push(phrases[i][j]);
-            playAudio();
+            playAudio(); //play sound effects
             j++;
         }
 
@@ -21,13 +21,13 @@ function loop(){
             j=0;
         }
     }
-    setTimeout(loop, random(100, 500));
-
+    delay = random(100, 500);
+    setTimeout(loop, delay);
 }
-function random(min, max){
+function random(min, max){ //random number for delay time
     return Math.floor(Math.random()* (max- min+ 1)) + min;
 }
-function playAudio(){
+function playAudio(){ //play sound effects
     const audio = new Audio('sound.mp3');
     audio.play();
 }
