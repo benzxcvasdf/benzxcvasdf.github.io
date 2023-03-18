@@ -6,6 +6,11 @@ let i =0;
 let j =0;
 let currentPhrases = [];
 let delay = 0;
+
+function random(min, max){ //random number for delay time
+    return Math.floor(Math.random()* (max- min+ 1)) + min;
+}
+
 function loop(){ //the loop for type effect
 
     textDisplay.innerHTML = currentPhrases.join(''); //put in space
@@ -27,9 +32,6 @@ function loop(){ //the loop for type effect
     }
     delay = random(100, 500);
     setTimeout(loop, delay);
-}
-function random(min, max){ //random number for delay time
-    return Math.floor(Math.random()* (max- min+ 1)) + min;
 }
 
 loop();
