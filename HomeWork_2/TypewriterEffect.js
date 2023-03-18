@@ -10,7 +10,7 @@ function random(min, max){ //random number for delay time
     return Math.floor(Math.random()* (max- min+ 1)) + min;
 }
 function playAudio(){ //play sound effects
-    audio.load();
+
     audio.play();
 }
 
