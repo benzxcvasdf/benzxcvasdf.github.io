@@ -30,6 +30,7 @@ function loop(){ //the loop for type effect
             j=0;
         }
     }
+    audio.muted = true;
     delay = random(100, 500);
     setTimeout(loop, delay);
 }
