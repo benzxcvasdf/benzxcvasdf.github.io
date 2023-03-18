@@ -9,6 +9,7 @@ let delay = 0;
 function loop(){ //the loop for type effect
 
     textDisplay.innerHTML = currentPhrases.join(''); //put in space
+    audio.muted = false;
     audio.play();//play sound effects
     if (i < phrases.length){
 
