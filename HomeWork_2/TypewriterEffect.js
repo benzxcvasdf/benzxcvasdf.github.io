@@ -9,12 +9,6 @@ let delay = 0;
 function random(min, max){ //random number for delay time
     return Math.floor(Math.random()* (max- min+ 1)) + min;
 }
-function playAudio(){ //play sound effects
-    const audio = new Audio('sound.mp3');
-    audio.muted = true;
-    audio.play();
-}
-
 function loop(){ //the loop for type effect
 
     textDisplay.innerHTML = currentPhrases.join(''); //put in space
@@ -22,7 +16,6 @@ function loop(){ //the loop for type effect
 
         if (j < phrases[i].length){
             currentPhrases.push(phrases[i][j]);
-            playAudio(); //play sound effects
             j++;
         }
 
