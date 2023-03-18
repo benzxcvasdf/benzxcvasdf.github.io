@@ -11,6 +11,7 @@ function random(min, max){ //random number for delay time
 }
 function playAudio(){ //play sound effects
     const audio = new Audio('sound.mp3');
+    audio.muted = true;
     audio.play();
 }
 
