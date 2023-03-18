@@ -1,7 +1,7 @@
 const textDisplay = document.getElementById('textEffect');
 const phrases = ['There are too many people using it now, please wait. If waiting too long you can try to F5'];
 const audio = new Audio('sound.mp3');
-audio.muted = true;
+
 let i =0;
 let j =0;
 let currentPhrases = [];
@@ -25,13 +25,12 @@ function loop(){ //the loop for type effect
     }
     delay = random(100, 500);
     setTimeout(loop, delay);
-    audio.muted = true;
 }
 function random(min, max){ //random number for delay time
     return Math.floor(Math.random()* (max- min+ 1)) + min;
 }
 function playAudio(){ //play sound effects
-    audio.muted = false;
+    audio.muted = true;
     audio.play();
 }
 loop();
