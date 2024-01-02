@@ -72,6 +72,15 @@
         <h4>常用餐廳</h4>
       </div>
 
+      <div class="col-md-4">
+        <div class="col">
+          <h4>隨機選餐廳</h4>
+          <button type="button" class="btn btn-outline-primary" @click="randomRestaurant">
+            隨機選餐廳
+          </button>
+        </div>
+      </div>
+
       <div class="col">
         <button type="button" class="btn btn-outline-secondary"
                 v-for="f in n" @click="openInfoWindows(f.properties.id)">
@@ -225,7 +234,19 @@
         // 打開所選擇的信息窗口
         this.infowindowAll[id].open();
 
-      }
+      },
+      // 新增方法：隨機選擇餐廳
+      randomRestaurant() {
+        // 確保有餐廳資料
+        if (this.features.length > 0) {
+          const randomIndex = Math.floor(Math.random() * this.features.length);
+          const randomRestaurant = this.features[randomIndex];
+          this.openInfoWindows(randomRestaurant.properties.id);
+        } else {
+          alert("目前沒有可用的餐廳資料");
+       }
+}
+
     },
 
     created() {
