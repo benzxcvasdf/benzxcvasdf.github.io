@@ -1,0 +1,188 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [24.17860749964782, 120.64681972772061]
+      },
+      "properties": {
+        "id": 1,
+        "name": "起家雞韓式炸雞 台中逢甲店",
+        "site": "No. 100號, 文華路西屯區台中市407",
+        "phone_number": "0424511681",
+        "money":"2~400"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [24.17797621958071, 120.64518355644357]
+      },
+      "properties": {
+        "id": 2,
+        "name": "刁民-酸菜魚 逢甲店",
+        "site": "407台中市西屯區福星路459號",
+        "phone_number": "0424522666",
+        "money":"4~600"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [24.182755658007277, 120.6460178624152]
+      },
+      "properties": {
+        "id": 3,
+        "name": "HUN 貳",
+        "site": "407台中市西屯區文華路217-8號",
+        "phone_number": "0427085878",
+        "money":"2~400"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [24.179607880679594, 120.64626983260494]
+      },
+      "properties": {
+        "id": 4,
+        "name": "星空Stellato（逢甲店）",
+        "site": "407台中市西屯區文華路121號",
+        "phone_number": "0424510121",
+        "money":"2~400"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [24.17759921953942, 120.64642313641298]
+      },
+      "properties": {
+        "id": 5,
+        "name": "泰辛火山排骨/火山蝦",
+        "site": "407台中市西屯區文華路71號D3",
+        "phone_number": "0968363989",
+        "money":"2~400"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [24.17771875235804, 120.64526938521925]
+      },
+      "properties": {
+        "id": 6,
+        "name": "旨味日式料理",
+        "site": "40743台中市西屯區福星路511巷1號",
+        "phone_number": "0960977527",
+        "money":"2~400"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [24.179200814376287, 120.64420763505284]
+      },
+      "properties": {
+        "id": 7,
+        "name": "村口微光-逢甲店",
+        "site": "407台中市西屯區逢甲路72巷11號",
+        "phone_number": "0424521688",
+        "money":"2~400"
+      }
+    },
+
+    {
+          "type": "f",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [24.18431141838114, 120.64621021534349]
+          },
+          "properties": {
+            "id": 8,
+            "name": "一生必吃超好吃咖啡貝爾的店，沒吃不是逢甲人",
+            "site": "407台中市西屯區文華路263號",
+            "phone_number": "0424529938",
+            "money":"1~200"
+          }
+        },
+        {
+                  "type": "f",
+                  "geometry": {
+                    "type": "Point",
+                    "coordinates": [24.177348352986336, 120.64506893651053]
+                  },
+                  "properties": {
+                    "id": 9,
+                    "name": "那個鍋 - 逢甲総本鋪",
+                    "site": "407台中市西屯區福星路522號",
+                    "phone_number": "0427086789",
+                    "money":"1~200"
+                  }
+                },
+        {
+            "type": "f",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [24.181550234993725, 120.64478236894132]
+            },
+            "properties": {
+               "id": 10,
+               "name": "大埔鐵板燒 逢甲福星店",
+               "site": "407台中市西屯區福星路318號",
+               "phone_number": "0424526493",
+               "money":"1~200"
+            }
+        },
+        {
+            "type": "f",
+            "geometry": {
+            "type": "Point",
+            "coordinates": [24.18289682107598, 120.64807011373377]
+            },
+            "properties": {
+               "id": 11,
+               "name": "御方香早餐",
+               "site": "407台中市西屯區西安街277巷25弄1號",
+               "phone_number": "0427071885",
+               "money":"1~200"
+            }
+        },
+        {
+          "type": "f",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [24.18253491370325, 120.646482983715]
+            },
+            "properties": {
+               "id": 12,
+               "name": "鄭二家快餐",
+               "site": "407台中市西屯區文華路120號",
+               "phone_number": "0427064033",
+               "money":"1~200"
+            }
+        },
+        {
+          "type": "f",
+          "geometry": {
+             "type": "Point",
+             "coordinates": [24.182661788232462, 120.646395180016]
+          },
+           "properties": {
+              "id": 13,
+              "name": "好而大",
+              "site": "407台中市西屯區文華路217-7號",
+              "phone_number": "0424510751",
+              "money":"1~200"
+           }
+        }
+  ]
+}
