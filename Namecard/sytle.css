@@ -20,8 +20,8 @@ body{
   overflow: hidden;
 } 
 .namecard{
-  width: 350px;
-  height: 220px;
+  width: 450px;
+  height: 450px;
   padding: 20px;
   
   margin-left: auto;
@@ -90,8 +90,9 @@ body{
 .mark{
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh; 
+  align-items: center; 
+  position: absolute;
+   
   font-size: 300px; 
   bottom: 100px;
   font-weight: 100;
