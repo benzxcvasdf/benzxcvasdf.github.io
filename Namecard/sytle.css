@@ -88,11 +88,11 @@ body{
   font-weight: 500;
 }
 .mark{
-  width: 350px;
-  height: 220px;
-  padding: 20px;
-  font-size: 300px;
-  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; 
+  font-size: 300px; 
   bottom: 100px;
   font-weight: 100;
   color: rgba(0,0,0,0.035);
