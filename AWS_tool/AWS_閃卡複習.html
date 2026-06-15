@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AWS Cloud Practitioner 閃卡複習（116 題）</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root{
+    --bg:#0f172a; --panel:#1e293b; --panel2:#273449;
+    --accent:#ff9900; --accent2:#ffb84d; --text:#e2e8f0; --muted:#94a3b8;
+    --green:#22c55e; --red:#ef4444; --blue:#38bdf8; --border:#334155;
+  }
+  body{ font-family:-apple-system,"PingFang TC","Microsoft JhengHei",Segoe UI,sans-serif;
+    background:linear-gradient(160deg,#0f172a,#13203a); color:var(--text); min-height:100vh; padding:18px; }
+  .wrap{ max-width:1280px; margin:0 auto; }
+  header{ text-align:center; margin-bottom:14px; }
+  header h1{ font-size:1.35rem; color:var(--accent); letter-spacing:.5px; }
+  header p{ color:var(--muted); font-size:.85rem; margin-top:4px; }
+
+  .bar{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center;
+    background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:10px; margin-bottom:14px; }
+  select,button{ font-family:inherit; font-size:.85rem; border-radius:8px; border:1px solid var(--border);
+    background:var(--panel2); color:var(--text); padding:7px 11px; cursor:pointer; transition:.15s; }
+  button:hover,select:hover{ border-color:var(--accent); }
+  button.primary{ background:var(--accent); color:#1a1a1a; border-color:var(--accent); font-weight:700; }
+  button.primary:hover{ background:var(--accent2); }
+  .stat{ font-size:.8rem; color:var(--muted); }
+  .stat b{ color:var(--text); }
+
+  .progress{ height:6px; background:var(--panel2); border-radius:99px; overflow:hidden; margin-bottom:14px; }
+  .progress span{ display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); width:0; transition:.3s; }
+
+  .card{ perspective:1800px; margin-bottom:14px; }
+  .inner{ position:relative; width:100%; min-height:660px; transition:transform .55s; transform-style:preserve-3d; cursor:pointer; }
+  .inner.flip{ transform:rotateY(180deg); }
+  .face{ position:absolute; inset:0; backface-visibility:hidden; border-radius:18px; padding:40px 44px;
+    border:1px solid var(--border); display:flex; flex-direction:column; }
+  .front{ background:linear-gradient(155deg,#1e293b,#243352); }
+  .back{ background:linear-gradient(155deg,#1c2e26,#1e3a31); transform:rotateY(180deg); overflow-y:auto; }
+  .meta{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+  .qno{ font-size:.78rem; color:var(--accent); font-weight:700; letter-spacing:.5px; }
+  .tag{ font-size:.7rem; background:var(--panel2); color:var(--muted); padding:3px 9px; border-radius:99px; border:1px solid var(--border); }
+  .multi{ font-size:.7rem; color:var(--blue); margin-left:6px; }
+  .q-en{ font-size:1.45rem; line-height:1.55; margin-bottom:14px; }
+  .q-zh{ font-size:1.22rem; color:var(--accent2); line-height:1.6; margin-bottom:22px; }
+  .opts{ list-style:none; font-size:1.18rem; color:var(--muted); display:flex; flex-direction:column; gap:9px; }
+  .opts li{ padding:12px 16px; background:rgba(255,255,255,.03); border-radius:8px; border:1px solid transparent; }
+  .opts li.correct{ background:rgba(34,197,94,.15); border-color:var(--green); color:#bbf7d0; }
+  .hint{ margin-top:auto; text-align:center; font-size:.72rem; color:var(--muted); padding-top:12px; }
+
+  .ans-label{ font-size:1.02rem; color:var(--green); font-weight:700; margin-bottom:6px; }
+  .ans-big{ font-size:1.85rem; font-weight:800; color:#fff; margin-bottom:16px; }
+  .explain{ background:rgba(255,255,255,.04); border-left:4px solid var(--blue); border-radius:8px;
+    padding:15px 18px; font-size:1.1rem; line-height:1.6; color:#cbe7f5; margin-bottom:14px; }
+  .explain b{ color:#e0f2fe; }
+  .cexplain{ background:rgba(255,255,255,.04); border-left:4px solid var(--accent2); border-radius:8px;
+    padding:15px 18px; font-size:1.18rem; line-height:1.8; color:#fde7c8; margin-bottom:14px; }
+  .cexplain b{ color:#ffe4b8; }
+  .keypoint{ background:rgba(255,255,255,.05); border-left:4px solid var(--accent); border-radius:8px;
+    padding:15px 18px; font-size:1.2rem; line-height:1.7; }
+  .keypoint .zh{ color:#fff; }
+
+  .nav{ display:flex; gap:8px; justify-content:center; align-items:center; margin-bottom:10px; }
+  .nav button{ min-width:88px; padding:10px; }
+  .mark{ display:flex; gap:8px; justify-content:center; }
+  .mark button{ flex:1; max-width:200px; padding:11px; font-weight:600; }
+  .know{ border-color:var(--green); color:#bbf7d0; }
+  .know:hover{ background:rgba(34,197,94,.18); }
+  .dunno{ border-color:var(--red); color:#fecaca; }
+  .dunno:hover{ background:rgba(239,68,68,.18); }
+  .marked-known .front{ box-shadow:inset 0 0 0 2px var(--green); }
+  .marked-unknown .front{ box-shadow:inset 0 0 0 2px var(--red); }
+
+  footer{ text-align:center; color:var(--muted); font-size:.72rem; margin-top:16px; line-height:1.6; }
+  @media(max-width:560px){ .nav button{ min-width:0; flex:1; } header h1{font-size:1.1rem;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>AWS Cloud Practitioner 閃卡複習</h1>
+    <p>AWS Academy · 題庫116題 + Module 1–10共100題 · 共 216 題 · 英文原題 + 中文完整解析</p>
+  </header>
+
+  <div class="bar">
+    <select id="topic"></select>
+    <button id="zhToggle">中文題目：開</button>
+    <button id="shuffle">🔀 隨機洗牌</button>
+    <button id="reset">↺ 重設標記</button>
+    <span class="stat">熟：<b id="cKnow" style="color:var(--green)">0</b> · 不熟：<b id="cUnknown" style="color:var(--red)">0</b></span>
+  </div>
+
+  <div class="progress"><span id="pbar"></span></div>
+
+  <div class="card">
+    <div class="inner" id="inner">
+      <div class="face front" id="front"></div>
+      <div class="face back" id="back"></div>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button id="prev">← 上一題</button>
+    <button class="primary" id="flip">翻面看答案</button>
+    <button id="next">下一題 →</button>
+  </div>
+  <div class="mark">
+    <button class="dunno" id="markU">✗ 還不熟</button>
+    <button class="know" id="markK">✓ 已掌握</button>
+  </div>
+
+  <footer>
+    鍵盤：← → 切換題目　空白鍵翻面　1 不熟　2 掌握<br>
+    英文題幹與選項為 PDF 原文；中文翻譯與速記為輔助。少數答案具爭議處已加註。
+  </footer>
+</div>
+
+<script>
+const DATA = [
+{n:1,c:"儲存",multi:"Choose 2",en:"Which AWS services can be used to store files? [Choose 2] from below:",zh:"哪些 AWS 服務可用來儲存檔案？（選2）",opts:["A. Amazon CloudWatch","B. Amazon Simple Storage Service (Amazon S3)","C. Amazon Elastic Block Store (Amazon EBS)","D. AWS Config","E. Amazon Athena"],ans:"B, C",key:"存檔案 = S3（物件儲存）＋ EBS（區塊儲存，掛在 EC2）。"},
+{n:2,c:"網路/CDN",en:"Which of the following services uses AWS edge locations?",zh:"哪個服務會使用 AWS 邊緣節點（edge location）？",opts:["A. Amazon Virtual Private Cloud (Amazon VPC)","B. Amazon CloudFront","C. Amazon Elastic Compute Cloud (Amazon EC2)","D. AWS Storage Gateway"],ans:"B",key:"edge location（CDN 邊緣節點）= CloudFront。"},
+{n:3,c:"運算",en:"Which of the following is a benefit of Amazon Elastic Compute Cloud (Amazon EC2) over physical servers?",zh:"EC2 相較實體伺服器的優點是？",opts:["A. Automated backup","B. Paying only for what you use","C. The ability to choose hardware vendors","D. Root/administrator access"],ans:"B",key:"EC2 優勢 = 用多少付多少（按秒計費）。"},
+{n:4,c:"監控/管理",en:"Which AWS service provides infrastructure security optimization recommendations?",zh:"哪個服務提供基礎設施安全最佳化建議？",opts:["A. AWS Price List Application Programming Interface (API)","B. Reserved Instances","C. AWS Trusted Advisor","D. Amazon Elastic Compute Cloud (Amazon EC2) Spot Fleet"],ans:"C",key:"最佳化建議（成本/效能/安全/容錯）= Trusted Advisor。"},
+{n:5,c:"監控/管理",en:"Which service allows for the collection and tracking of metrics for AWS services?",zh:"哪個服務可收集與追蹤 AWS 服務的指標？",opts:["A. Amazon CloudFront","B. Amazon CloudSearch","C. Amazon CloudWatch","D. Amazon Machine Learning (Amazon ML)"],ans:"C",key:"監控/收集指標 = CloudWatch。"},
+{n:6,c:"監控/管理",en:"A company needs to know which user was responsible for terminating several critical Amazon Elastic Compute Cloud (Amazon EC2) Instances. Where can the customer find this information?",zh:"想知道哪位使用者刪除了關鍵 EC2 執行個體，要去哪查？",opts:["A. AWS Trusted Advisor","B. Amazon EC2 instance usage report","C. Amazon CloudWatch","D. AWS Cloud Trail logs"],ans:"D",key:"誰做了什麼 API 動作 = CloudTrail（稽核 API 紀錄）。"},
+{n:7,c:"網路/CDN",en:"Which service should an administrator use to register a new domain name with AWS?",zh:"管理員要用哪個服務在 AWS 註冊新網域名稱？",opts:["A. Amazon Route 53","B. Amazon Cloud Front","C. Elastic Load Balancing","D. Amazon Virtual Private Cloud (Amazon VPC)"],ans:"A",key:"註冊網域 / DNS = Route 53。"},
+{n:8,c:"架構原則",en:"What is the value of having AWS Cloud services accessible through an Application Programming Interface (API)?",zh:"透過 API 存取 AWS 服務的價值是？",opts:["A. Cloud resources can be managed programmatically","B. AWS infrastructure use will always be cost-optimized","C. All application testing is managed by AWS.","D. Customer-owned, on-premises infrastructure becomes programmable."],ans:"A",key:"API = 以程式化方式管理雲端資源。"},
+{n:9,c:"架構原則",en:'Which of the following examples supports the cloud design principle "design for failure and nothing will fail"?',zh:"哪個例子體現「為失敗而設計」原則？",opts:["A. Adding an elastic load balancer in front of a single Amazon Elastic Compute Cloud (Amazon EC2) instance","B. Creating and deploying the most cost-effective solution","C. Deploying an application in multiple Availability Zones","D. Using Amazon CloudWatch alerts to monitor performance"],ans:"C",key:"為失敗設計 = 跨多個可用區（AZ）部署。"},
+{n:10,c:"安全/身分",en:"Which service allows an administrator to create and modify AWS user permissions?",zh:"哪個服務可建立與修改使用者權限？",opts:["A. AWS Config","B. AWS Cloud Trail","C. AWS Key Management Service (AWS KMS)","D. AWS Identity and Access Management (IAM)"],ans:"D",key:"使用者與權限管理 = IAM。"},
+{n:11,c:"資料庫",en:"Which AWS service automates infrastructure provisioning and administrative tasks for an analytical data warehouse?",zh:"哪個服務為分析型資料倉儲自動化佈建與管理？",opts:["A. Amazon Redshift","B. Amazon DynamoDB","C. Amazon ElastiCache","D. Amazon Aurora"],ans:"A",key:"資料倉儲（PB 級分析）= Redshift。"},
+{n:12,c:"安全/身分",en:"Which of the following is the responsibility of the AWS customer according to the Shared Security Model?",zh:"依共同責任模型，哪項是「客戶」的責任？",opts:["A. Managing AWS Identity and Access Management (IAM)","B. Securing edge locations","C. Monitoring physical device security","D. Implementing service organization Control (SOC) standards"],ans:"A",key:"客戶責任 = 管理 IAM / 使用者權限（雲「中」的安全）。"},
+{n:13,c:"計費/支援",en:"Where can a customer go to get more detail about Amazon Elastic Compute Cloud (Amazon EC2) billing activity that took place 3 month ago?",zh:"想看三個月前 EC2 的帳單明細，去哪？",opts:["A. Amazon EC2 dashboard","B. AWS Cost and Usage reports","C. AWS Trusted Advisor dashboard","D. AWS Cloud Trail logs stored in Amazon S3"],ans:"B",key:"歷史花費明細 = Cost Explorer / Cost & Usage（可看近 13 個月）。"},
+{n:14,c:"安全/身分",en:"Who has control of the data in an AWS account?",zh:"誰擁有 AWS 帳戶內資料的控制權？",opts:["A. AWS Support Team","B. AWS Account Owner","C. AWS Security Team","D. AWS Technical Account Manager (TAM)"],ans:"B",key:"資料控制權 = 帳戶擁有者（Account Owner）。"},
+{n:15,c:"架構原則",en:"The main benefit of decoupling an application is to:",zh:"應用程式「解耦」的主要好處是？",opts:["A. Create a tightly integrated application","B. Reduce inter-dependencies so failures do not impact other components","C. Enable data synchronization across the web application layer.","D. Have the ability to execute automated bootstrapping actions."],ans:"B",key:"解耦 = 降低相依，單一元件故障不會拖垮整體。"},
+{n:16,c:"架構原則",en:"Which of the following is a benefit of running an application across two Availability Zones?",zh:"應用程式跨兩個可用區運行的好處是？",opts:["A. Performance is improved over running in a single Availability Zone.","B. It is more secure than running in a single Availability Zone.","C. It significantly reduces the total cost of ownership versus running in a single Availability Zone.","D. It increases the availability of an application compared to running in a single Availability Zone."],ans:"D",key:"雙 AZ = 提高可用性（一個 AZ 掛了還有另一個）。"},
+{n:17,c:"安全/身分",multi:"Select 2",en:"Which of the following security requirements are managed by AWS customers? Select 2 from below:.",zh:"哪些安全項目由「客戶」負責？（選2）",opts:["A. Password Policies","B. User permissions","C. Physical security","D. Disk disposal","E. Hardware patching"],ans:"A, B",key:"客戶管 = 密碼政策 + 使用者權限。"},
+{n:18,c:"架構原則",en:"Systems applying the cloud architecture principle of elasticity will",zh:"套用「彈性（elasticity）」原則的系統會？",opts:["A. Minimize storage requirements by reducing logging and auditing activities","B. Create systems that scale to the required capacity based on changes in demand","C. Enable AWS to automatically select the most cost-effective services.","D. Accelerate the design process because recovery from failure is automated, reducing the need for testing"],ans:"B",key:"彈性 = 依需求變化自動擴/縮容量（如 Auto Scaling）。"},
+{n:19,c:"運算",en:"Amazon Elastic Compute Cloud (Amazon EC2) Spot instances are appropriate for which of the following workloads?",zh:"EC2 Spot 執行個體適合哪種工作負載？",opts:["A. Workloads that are only run in the morning and stopped at night","B. Workloads where the availability of the Amazon EC2 instances can be flexible","C. Workloads that need to run for long periods of time without interruption","D. Workloads that are critical and need Amazon EC2 instances with termination protection"],ans:"B",key:"Spot = 可中斷、時間彈性的工作（批次/分析）。最便宜但可能被收回。"},
+{n:20,c:"監控/管理",en:"What AWS feature enables a user to manage services through a web-based user interface?",zh:"哪個功能讓使用者透過網頁介面管理服務？",opts:["A. AWS Management Console","B. AWS Application Programming Interface (API)","C. AWS Software Development Kit (SDK)","D. Amazon CloudWatch"],ans:"A",key:"網頁圖形介面 = Management Console。"},
+{n:21,c:"計費/支援",en:"Which tool can display the distribution of AWS spending?",zh:"哪個工具能顯示 AWS 花費的分布？",opts:["A. AWS organizations","B. Amazon Dev Pay","C. AWS Trusted Advisor","D. AWS Cost Explorer"],ans:"D",key:"花費分布視覺化 = Cost Explorer。"},
+{n:22,c:"安全/身分",en:"How can the AWS Management Console be secured against unauthorized access?",zh:"如何保護管理主控台不被未授權存取？",opts:["A. Apply Multi-Factor Authentication (MFA)","B. Set up a secondary password","C. Request root access privileges","D. Disable AWS console access"],ans:"A",key:"保護登入 = MFA（多因素驗證）。"},
+{n:23,c:"安全/身分",en:"Which AWS Cloud service is used to turn on Multi-Factor Authentication (MFA)?",zh:"哪個服務用來啟用 MFA？",opts:["A. AWS Identity and Access Management (IAM)","B. Amazon Elastic Compute Cloud (Amazon EC2)","C. AWS Config","D. Amazon Inspector"],ans:"A",key:"啟用 MFA 在 IAM 裡設定。"},
+{n:24,c:"架構原則",en:"A disaster recovery strategy on AWS should be based on launching infrastructure in a separate:",zh:"AWS 上的災難復原策略應在哪個獨立範圍佈建？",opts:["A. Subnet","B. AWS Region","C. AWS edge location","D. Amazon Virtual Private Cloud (Amazon VPC)"],ans:"B",key:"災難復原 = 部署在另一個 Region（地理隔離）。"},
+{n:25,c:"計費/支援",en:"Which of the following is a factor when calculating Total Cost of Ownership (TCO) for the AWS Cloud?",zh:"計算 AWS 雲端 TCO 時，哪項是考量因素？",opts:["A. The number of servers migrated to AWS","B. The number of users migrated to AWS","C. The number of passwords migrated to AWS","D. The number of keys migrated to AWS"],ans:"A",key:"TCO 主要看遷移的伺服器數量（執行中才計費）。"},
+{n:26,c:"網路/CDN",en:"Which AWS service is used to as a global content delivery network (CDN) service in AWS?",zh:"哪個服務是全球內容傳遞網路（CDN）？",opts:["A. Amazon SES","B. Amazon Cloudtrail","C. Amazon CloudFront","D. Amazon S3"],ans:"C",key:"CDN = CloudFront。"},
+{n:27,c:"資料庫",en:"Which of the following is a fully managed NoSQL database service available with AWS.",zh:"哪個是 AWS 全託管的 NoSQL 資料庫？",opts:["A. AWS RDS","B. AWS DynamoDB","C. AWS Redshift","D. AWS MongoDB"],ans:"B",key:"NoSQL（毫秒延遲、鍵值/文件）= DynamoDB。"},
+{n:28,c:"儲存",en:"A company wants to store data that is not frequently accessed. What is the best and cost efficient solution that should be considered?",zh:"公司想存放不常存取的資料，最省成本的方案？",opts:["A. Amazon Storage Gateway","B. Amazon Glacier","C. Amazon EBS","D. AmazoS3"],ans:"B",key:"封存/冷資料 = Glacier（低成本長期封存）。"},
+{n:29,c:"運算",en:"You are currently hosting an infrastructure and most of the EC2 instances are near 90 - 100% utilized. What is the type of EC2 instances you would utilize to ensure costs are minimized?",zh:"多數 EC2 使用率近 90-100%，用哪種執行個體最省？",opts:["A. Reserved instances","B. On-demand instances","C. Spot instances","D. Regular instances"],ans:"A",key:"長期高使用 = Reserved（預留，折扣大）。"},
+{n:30,c:"儲存",en:"What is the ability provided by AWS to enable fast, easy, and secure transfers of files over long distances between your client and your Amazon S3 bucket.",zh:"什麼能讓檔案跨遠距離快速安全傳到 S3？",opts:["A. File Transfer","B. HTTP Transfer","C. Transfer Acceleration","D. S3 Acceleration"],ans:"C",key:"遠距上傳 S3 加速 = S3 Transfer Acceleration（走 CloudFront edge）。"},
+{n:31,c:"安全/身分",en:"As per the AWS Acceptable Use Policy, penetration testing of EC2 instances:",zh:"依 AWS 使用政策，對 EC2 做滲透測試：",opts:["A. May be performed by AWS, and will be performed by AWS upon customer request.","B. May be performed by AWS, and is periodically performed by AWS.","C. Are expressly prohibited under all circumstances.","D. May be performed by the customer on their own instances with prior authorization from AWS.","E. May be performed by the customer on their own instances, only if performed from EC2 instances."],ans:"D",key:"題庫答案 = 需先取得 AWS 授權。（註：現實中 AWS 已對常見服務免事先核准，但本題庫選 D）"},
+{n:32,c:"監控/管理",en:"The Trusted Advisor service provides insight regarding which four categories of an AWS account?",zh:"Trusted Advisor 提供帳戶哪四大類洞察？",opts:["A. Security, fault tolerance, high availability, and connectivity","B. Security, access control, high availability, and performance","C. Performance, cost optimization, security, and fault tolerance","D. Performance, cost optimization, access control, and connectivity"],ans:"C",key:"TA 四類 = 效能、成本最佳化、安全、容錯。"},
+{n:33,c:"儲存",en:"A company is deploying a two-tier, highly available web application to AWS. Which service provides durable storage for static content while utilizing lower Overall CPU resources for the web tier?",zh:"兩層式高可用網站，靜態內容用哪個耐久儲存且省 CPU？",opts:["A. Amazon EBS volume","B. Amazon S3","C. Amazon EC2 instance store","D. Amazon RDS instance"],ans:"B",key:"靜態內容耐久儲存 = S3。"},
+{n:34,c:"安全/身分",en:'What best describes the "Principal of Least Privilege"? Choose the correct answer from the options given below',zh:"「最小權限原則」最佳描述是？",opts:["A. All users should have the same baseline permissions granted to them to use basic AWS services.","B. Users should be granted permission to access only resources they need to do their assigned job.","C. Users should submit all access request in written so that there is a paper trail of who needs access to different AWS resources.","D. Users should always have a little more access granted to them then they need, just in case they end up needed it in the future."],ans:"B",key:"最小權限 = 只給完成工作所需的最少權限。"},
+{n:35,c:"運算",en:"Which of the below mentioned services can be used to host virtual servers in the AWS Cloud?",zh:"哪個服務可在 AWS 上託管虛擬伺服器？",opts:["A. AWS IAM","B. AWS Server","C. AWS EC2","D. AWS Regions"],ans:"C",key:"虛擬伺服器 = EC2。"},
+{n:36,c:"安全/身分",multi:"Choose 2",en:"Which of the following can be used to protect EC2 Instances hosted in AWS. Choose 2 answers from the options given below",zh:"哪些可用來保護 AWS 上的 EC2 執行個體？（選2）",opts:["A. Usage of Security Groups","B. Usage of AMI's","C. Usage of Network Access Control Lists","D. Usage of the Internet gateway"],ans:"A, C",key:"保護 EC2 = 安全群組（執行個體層防火牆）+ NACL（子網層防火牆）。"},
+{n:37,c:"運算",en:"You work for a company that is planning on using the AWS EC2 service. They currently create golden images of their deployed Operating system. Which of the following correspond to a golden image in AWS.",zh:"公司用黃金映像部署作業系統，AWS 中對應的是？",opts:["A. EBS Volumes","B. EBS Snapshots","C. Amazon Machines Images","D. EC2 Copies"],ans:"C",key:"黃金映像（預裝 OS 範本）= AMI。"},
+{n:38,c:"安全/身分",multi:"Choose 2",en:"You are developing and planning on deployment an application onto the AWS Cloud. This application needs to be PCI Compliance. Which of the below steps would you carry out to ensure the compliance is met for the application. [Choose 2 answers]",zh:"應用需符合 PCI，要做哪兩步？（選2）",opts:["A. Choose AWS services which are PCI Compliant","B. Ensure the right steps are taken during application development for PCI Compliance","C. Ensure the AWS Services are made PCI Compliant","D. Do an audit after the deployment of the application for PCI Compliance"],ans:"A, B",key:"PCI 合規 = 選用合規服務 + 開發時落實合規（共同責任）。"},
+{n:39,c:"儲存",multi:"Choose 3",en:"Which of the below can be used to get data onto Amazon Glacier? [Choose 3] answers.",zh:"哪些可把資料上傳到 Glacier？（選3）",opts:["A. AWS Glacier API","B. AWS Console","C. AWS Glacier SDK","D. AWS S3 Lifecycle policies"],ans:"A, C, D",key:"上傳 Glacier = API / SDK / S3 生命週期。主控台「不能」直接上傳。"},
+{n:40,c:"計費/支援",en:"Which of the following in the AWS Support plans gives access to a Support Concierge",zh:"哪個支援方案有 Support Concierge（禮賓服務）？",opts:["A. Basic","B. Developer","C. Business","D. Enterprise"],ans:"D",key:"Concierge、TAM = 只有 Enterprise 方案才有。"},
+{n:41,c:"計費/支援",en:"A company is planning to use AWS to host critical resources. Most of their systems are business critical and need to have response times less than 15 minutes. Which of the following support plans should they consider?",zh:"關鍵系統需 15 分鐘內回應，選哪個方案？",opts:["A. Basic","B. Developer","C. Business","D. Enterprise"],ans:"D",key:"<15 分鐘（關鍵系統停機）= Enterprise。"},
+{n:42,c:"網路/CDN",en:"Which of the following is NOT a feature of an edge location do.",zh:"下列何者「不是」邊緣節點的功能？",opts:["A. Distribute content to users","B. Cache common responses","C. Distribute load across multiple resources","D. Used in conjunction with the Cloudfront service"],ans:"C",key:"edge 不做負載分散（那是 ELB 的工作）。"},
+{n:43,c:"儲存",en:"There is a requirement for storage of objects. The objects should be able to be downloaded via a URL. Which storage option would you choose?",zh:"物件需可透過 URL 下載，選哪個儲存？",opts:["A. Amazon S3","B. Amazon Glacier","C. Amazon Storage Gateway","D. Amazon EBS"],ans:"A",key:"每個物件有 URL 可下載 = S3。"},
+{n:44,c:"運算",en:"There is a requirement to host a database server for a minimum period of one year. Which of the following would result in the least cost",zh:"資料庫至少跑一年，哪個最省成本？",opts:["A. Spot Instances","B. On-Demand","C. No Upfront costs Reserved","D. Partial Upfront costs Reserved"],ans:"D",key:"長期（≥1年）最省 = 部分預付 Reserved（折扣更多）。"},
+{n:45,c:"運算",en:"There is a requirement for a development and test environment for 3 months. Which would you use?",zh:"開發測試環境只用 3 個月，用哪個？",opts:["A. Spot Instances","B. On-Demand","C. No Upfront costs Reserved","D. Partial Upfront costs Reserved"],ans:"B",key:"短期 = On-Demand（隨開隨用、不綁約）。"},
+{n:46,c:"安全/身分",multi:"Choose 2",en:"When creating security groups, which of the following is a responsibility of the customer. Choose 2 from below:.",zh:"建立安全群組時，哪兩項是客戶責任？（選2）",opts:["A. Giving a name and description for the security group","B. Defining the rules as per the customer requirements.","C. Ensure the rules are applied immediately","D. Ensure the security groups are linked to the Elastic Network interface"],ans:"A, B",key:"客戶責任 = 命名/描述 + 定義規則。"},
+{n:47,c:"計費/支援",multi:"Choose 2",en:"Which of the following are advantages of having infrastructure hosted on the AWS Cloud? [Choose 2]:",zh:"在 AWS 託管基礎設施的優點？（選2）",opts:["A. Having complete control over the physical infrastructure","B. Having the pay as you go model","C. No Upfront costs","D. Having no need to worry about security"],ans:"B, C",key:"優勢 = 按用付費 + 無前期成本。（實體設施由 AWS 管，安全仍是共同責任）"},
+{n:48,c:"監控/管理",en:"There is an external audit being carried out on your company. The IT auditor needs to have a log of all access to the AWS resources in the company's account. Which of the below services can assist in providing these details?",zh:"外部稽核需要所有資源存取紀錄，用哪個？",opts:["A. AWS Cloudwatch","B. AWS Cloudtrail","C. AWS EC2","D. AWS SNS"],ans:"B",key:"存取/API 稽核紀錄 = CloudTrail。"},
+{n:49,c:"資料庫",en:"Which of the following features of RDS allows for data redundancy across regions",zh:"哪個 RDS 功能可跨區做資料冗餘？",opts:["A. Cross region replication","B. Creating Read Replica's","C. Using snapshots","D. Using Multi-AZ feature"],ans:"B",key:"跨區冗餘 = Read Replica（可跨區）。Multi-AZ 只在同區。"},
+{n:50,c:"架構原則",en:"Your company has a set of EC2 Instances hosted in AWS. There is a requirement to create snapshots from the EBS volumes attached to these EC2 Instances in another geographical location. As per this requirement, where would you create the snapshots?",zh:"要在另一個地理位置建立 EBS 快照，選？",opts:["A. In another Availability Zone","B. In another data center","C. In another Region","D. In another Edge location"],ans:"C",key:"不同地理位置 = 另一個 Region。"},
+{n:51,c:"資料庫",en:"A company wants to host a self-managed database in AWS. How would you ideally implement this solution?",zh:"想在 AWS 託管「自管」資料庫，怎麼做？",opts:["A. Using the AWS DynamoDB service","B. Using the AWS RDS service","C. Hosting a database on an EC2 Instance","D. Using the Amazon Aurora service"],ans:"C",key:"完全自管（掌控引擎與底層）= 自己裝在 EC2 上。"},
+{n:52,c:"資料庫",en:"Which of the following is a compatible MySQL database which also has the ability to grow in storage size on its own.",zh:"哪個相容 MySQL 且能自動擴充儲存空間？",opts:["A. Aurora","B. DynamoDB","C. RDS Microsoft SQL Server","D. RDS MySQL"],ans:"A",key:"MySQL/PostgreSQL 相容 + 自動擴儲 = Aurora。"},
+{n:53,c:"架構原則",multi:"Choose 2",en:"Which of the following statements are TRUE when it comes to elasticity. Choose 2 answers from the options given below",zh:"關於彈性，哪兩句正確？（選2）",opts:["A. Diverting traffic to instances based on the demand","B. Diverting traffic to instances with the least load","C. Diverting traffic across multiple regions","D. Diverting traffic to instances with higher capacity"],ans:"A, B",key:"彈性 = 依需求 / 依最少負載導流（搭配 Auto Scaling）。"},
+{n:54,c:"網路/CDN",en:"Which of the following is the concept of the Elastic load balancer?",zh:"Elastic Load Balancer 的概念是？",opts:["A. To distribute traffic to multiple EC2 Instances","B. To scale up EC2 Instances","C. To distribute traffic to AWS resources across multiple regions","D. To increase the size of the EC2 Instance based on demand"],ans:"A",key:"ELB = 把流量分散到多個 EC2（同區、多 AZ）。"},
+{n:55,c:"架構原則",en:"Which of the following is the concept of Autoscaling",zh:"Auto Scaling 的概念是？",opts:["A. To scale up resources based on demand","B. To distribute traffic to multiple EC2 Instances","C. To distribute traffic to AWS resources across multiple regions","D. To increase the size of the EC2 Instance based on demand"],ans:"A",key:"Auto Scaling = 依需求自動增減資源數量。"},
+{n:56,c:"計費/支援",en:"Which of the following is used to derive the costs for moving artefacts from on-premise to AWS",zh:"用來估算「從地端搬到 AWS」的成本？",opts:["A. AWS TCO calculator","B. AWS Config","C. AWS Cost Explorer","D. AWS Consolidating billing"],ans:"A",key:"遷移成本比較 = TCO 計算機。"},
+{n:57,c:"儲存",en:"Which of the following is the responsibility of the customer when ensuring that data on EBS volumes is left safe",zh:"確保 EBS 資料安全，哪項是客戶責任？",opts:["A. Deleting the data when the device is destroyed","B. Creating EBS snapshots","C. Attaching volumes to EC2 Instances","D. Creating copies of EBS Volumes"],ans:"B",key:"客戶責任 = 建立 EBS 快照（備份）。"},
+{n:58,c:"監控/管理",en:"Which of the following can be used to call AWS services from programming languages",zh:"哪個可從程式語言呼叫 AWS 服務？",opts:["A. AWS SDK","B. AWS Console","C. AWS CLI","D. AWS IAM"],ans:"A",key:"程式語言整合 = SDK（軟體開發套件）。"},
+{n:59,c:"安全/身分",en:"Which of the following is the secure way of using AWS API to call AWS services from EC2 Instances",zh:"從 EC2 安全地呼叫 AWS API 的方式？",opts:["A. IAM Users","B. IAM Roles","C. IAM Groups","D. IAM policies"],ans:"B",key:"EC2 安全呼叫 API = IAM Role（臨時憑證，不用存金鑰）。"},
+{n:60,c:"計費/支援",multi:"Choose 2",en:"Which of the following are 2 ways that AWS allows to link accounts",zh:"AWS 連結多帳戶的兩種方式？（選2）",opts:["A. Consolidating billing","B. AWS Organizations","C. Cost Explorer","D. IAM"],ans:"A, B",key:"連結帳戶 = 合併帳單（Consolidated billing）+ Organizations。"},
+{n:61,c:"安全/身分",multi:"Choose 2",en:"Which of the following helps in DDoS protection. Choose 2 answers from the options given below",zh:"哪些有助於防範 DDoS？（選2）",opts:["A. Cloudfront","B. AWS Shield","C. AWS EC2","D. AWS Config"],ans:"A, B",key:"防 DDoS = CloudFront（縮小受攻擊面）+ AWS Shield。"},
+{n:62,c:"安全/身分",en:"Which of the following services can be used as a web application firewall in AWS.",zh:"哪個服務可當作 Web 應用程式防火牆？",opts:["A. AWS EC2","B. AWS WAF","C. AWS Firewall","D. AWS Protection"],ans:"B",key:"Web 應用防火牆 = WAF（過濾 HTTP/HTTPS）。"},
+{n:63,c:"安全/身分",en:"You want to add an extra layer of protection to the current authentication mechanism of user names and passwords for AWS. Which of the following can help in this regard",zh:"在帳密之外再加一層保護？",opts:["A. Using Password Policies","B. Using a mix of user names","C. Using AWS WAF","D. Using MFA"],ans:"D",key:"額外一層 = MFA。"},
+{n:64,c:"架構原則",en:"Which of the following disaster recovery deployment mechanisms that has the lowest downtime",zh:"哪種災難復原機制停機時間最短？",opts:["A. Pilot light","B. Warm standby","C. Backup Restore","D. DevOps"],ans:"B",key:"題庫答案 = Warm standby（選項中停機最短）。（註：完整光譜中 Multi-site/Hot standby 才是最低）"},
+{n:65,c:"儲存",en:"Which of the following services in AWS allows for object level storage on the cloud?",zh:"哪個服務提供雲端物件層級儲存？",opts:["A. Amazon EBS","B. Amazon Storage gateway","C. Amazon S3","D. Amazon SQS"],ans:"C",key:"物件儲存 = S3。"},
+{n:66,c:"儲存",en:"Which of the following can be attached to EC2 Instances to store data.",zh:"哪個可掛載到 EC2 上儲存資料？",opts:["A. Amazon Glacier","B. Amazon EBS Volumes","C. Amazon EBS Snapshots","D. Amazon SQS"],ans:"B",key:"掛載 EC2 的區塊儲存 = EBS Volume。"},
+{n:67,c:"網路/CDN",en:"Which of the following networking component can be used to host EC2 resources in the AWS Cloud?",zh:"哪個網路元件可承載 EC2 資源？",opts:["A. AWS Trusted Advisor","B. AWS VPC","C. AWS Elastic Load Balancer","D. AWS Autoscaling"],ans:"B",key:"虛擬網路容器 = VPC。"},
+{n:68,c:"架構原則",en:"Your company is planning to host resources in the AWS Cloud. They want to use services which can be used to decouple resources hosted on the cloud. Which of the following services can help fulfil this requirement",zh:"想用服務「解耦」雲端資源，選哪個？",opts:["A. AWS EBS Volumes","B. AWS EBS Snapshots","C. AWS Glacier","D. AWS SQS"],ans:"D",key:"解耦 = SQS（訊息佇列，元件間非同步傳遞）。"},
+{n:69,c:"網路/CDN",en:"Which of the following components of the Cloudfront service can be used to distribute contents to users across the globe.",zh:"CloudFront 哪個元件把內容分送到全球使用者？",opts:["A. Amazon VPC","B. Amazon Regions","C. Amazon Availability Zones","D. Amazon Edge locations"],ans:"D",key:"CloudFront 全球分送靠 = Edge locations。"},
+{n:70,c:"計費/支援",en:"Your company is planning to move to the AWS Cloud. You need to give a presentation on the cost perspective when moving existing resources to the AWS Cloud. When it comes to Amazon EC2, which of the following is an advantage when it comes to the cost perspective.",zh:"搬上雲時，EC2 的成本優勢是？",opts:["A. Having the ability of automated backups of the EC2 instance, so that you don't need to worry about the maintenance costs.","B. The ability to choose low cost AMI's to prepare the EC2 Instances","C. The ability to only pay for what you use","D. Ability to tag instances to reduce the overall cost"],ans:"C",key:"EC2 成本優勢 = 按用付費（按秒計費）。"},
+{n:71,c:"安全/身分",multi:"Choose 2",en:"Your company is planning on moving to the AWS Cloud. Once the movement to the Cloud is complete, they want to ensure that the right security settings are put in place. Which of the below tools can assist from a Security compliance. Choose 2 answers from the options given below.",zh:"哪些工具可協助安全合規？（選2）",opts:["A. AWS Inspector","B. AWS Trusted Advisor","C. AWS Support","D. AWS Kinesis"],ans:"A, B",key:"安全合規 = Inspector（掃 EC2 弱點）+ Trusted Advisor。"},
+{n:72,c:"監控/管理",en:"There is a requirement to collect important metrics from AWS RDS and EC2 Instances. Which of the following services can help fulfil this requirement.",zh:"收集 RDS、EC2 的重要指標，用哪個？",opts:["A. Amazon CloudFront","B. Amazon CloudSearch","C. Amazon CloudWatch","D. Amazon Config"],ans:"C",key:"收集指標 = CloudWatch。"},
+{n:73,c:"監控/管理",en:"Which of the following services can provide a complete audit trail of all AWS services used within an account.",zh:"哪個可提供帳戶內所有服務的完整稽核軌跡？",opts:["A. AWS Trusted Advisor","B. Amazon EC2 instance usage report","C. Amazon CloudWatch","D. AWS Cloud Trail logs"],ans:"D",key:"完整稽核軌跡 = CloudTrail。"},
+{n:74,c:"網路/CDN",en:"Which of the following service is most useful when a Disaster Recovery method is triggered in AWS.",zh:"觸發災難復原時，哪個服務最有用？",opts:["A. Amazon Route 53","B. Amazon SNS","C. Amazon SQS","D. Amazon Inspector"],ans:"A",key:"災難切換 = Route 53（DNS 改指向備援站點）。"},
+{n:75,c:"監控/管理",en:"Which of the following can be used to work with AWS services in a programmatic manner",zh:"哪個可用「程式化」方式操作 AWS 服務？",opts:["A. AWS Powershell","B. AWS Bash","C. AWS CLI","D. AWS Console"],ans:"C",key:"指令列程式化操作 = CLI。"},
+{n:76,c:"架構原則",multi:"Choose 3",en:'When designing a system, you use the principle of "design for failure and nothing will fail". Which of the following services/features of AWS can assist in supporting this design principle. Choose 3 from below:',zh:"哪些功能支援「為失敗而設計」？（選3）",opts:["A. Availability Zones","B. Regions","C. Elastic Load Balancer","D. Pay as you go"],ans:"A, B, C",key:"為失敗設計 = 多 AZ + 多 Region + ELB。"},
+{n:77,c:"安全/身分",en:"Currently your organization has an operational team that takes care of ID management in their on-premise data center. They now also need to manage users and groups created in AWS. Which of the following AWS tools would they need to use for performing this management function.",zh:"要管理 AWS 裡建立的使用者與群組，用哪個？",opts:["A. AWS Config","B. AWS Cloud Trail","C. AWS Key Management Service (AWS KMS)","D. AWS Identity and Access Management (IAM)"],ans:"D",key:"管理使用者/群組 = IAM。"},
+{n:78,c:"監控/管理",en:"You have a devops team in your current organization structure. They are keen to know if there is any service available in AWS which can be used to manage infrastructure as code. Which of the following can be met with such a requirement?",zh:"哪個服務做「基礎設施即程式碼」？",opts:["A. Using AWS Cloudformation","B. Using AWS Config","C. Using AWS Inspector","D. Using AWS Trusted Advisor"],ans:"A",key:"基礎設施即程式碼（模板佈建）= CloudFormation。"},
+{n:79,c:"資料庫",en:"Which of the following services is a fully managed, petabyte-scale data warehouse service in the AWS cloud?",zh:"哪個是全託管、PB 級的資料倉儲服務？",opts:["A. Amazon Redshift","B. Amazon DynamoDB","C. Amazon ElastiCache","D. Amazon Aurora"],ans:"A",key:"PB 級資料倉儲 = Redshift。"},
+{n:80,c:"安全/身分",multi:"Choose 3",en:"Which of the following is the responsibility of AWS according to the Shared Security Model? Choose 3 from below:",zh:"依共同責任模型，哪三項是「AWS」的責任？（選3）",opts:["A. Managing AWS Identity and Access Management (IAM)","B. Securing edge locations","C. Monitoring physical device security","D. Implementing service organization Control (SOC) standards"],ans:"B, C, D",key:"AWS 責任（雲「本身」的安全）= edge 安全、實體設備、SOC 合規。"},
+{n:81,c:"計費/支援",en:"Your company has just started using the resources on the AWS Cloud. They want to get an idea on the costs being incurred so far for the resources being used. How can this be achieved.",zh:"剛開始用 AWS，如何看目前已產生的花費？",opts:["A. By going to the Amazon EC2 dashboard. Here you can see the costs of the running EC2 resources.","B. By using the AWS Cost and Usage reports Explorer. Here you can see the running and forecast costs.","C. By using the AWS Trusted Advisor dashboard. This dashboard will give you all the costs.","D. By seeing the AWS Cloud Trail logs."],ans:"B",key:"目前及預估花費 = Cost Explorer / Cost & Usage。"},
+{n:82,c:"安全/身分",en:"By default who from the below roles has complete administrative control over all resources in the respective AWS account?",zh:"預設情況下，誰對所有資源有完整管理控制權？",opts:["A. AWS Support Team","B. AWS Account Owner","C. AWS Security Team","D. AWS Technical Account Manager (TAM)"],ans:"B",key:"預設最高權限 = 帳戶擁有者（root）。"},
+{n:83,c:"架構原則",en:"Your design team is planning to design an application that will be hosted on the AWS Cloud. One of their main non-functional requirements is given below. Reduce inter-dependencies so failures do not impact other components. Which of the following concepts does this requirement relate to?",zh:"「降低相依，故障不互相影響」屬於哪個概念？",opts:["A. Integration","B. Decoupling","C. Aggregation","D. Segregation"],ans:"B",key:"降低相依 = 解耦（Decoupling）。"},
+{n:84,c:"架構原則",en:"Which of the following can be used to increase the fault tolerance of an application.",zh:"哪個可提升應用程式的容錯能力？",opts:["A. Deploying resources across multiple edge locations","B. Deploying resources across multiple VPC's","C. Deploying resources across multiple Availability Zones","D. Deploying resources across multiple AWS Accounts"],ans:"C",key:"提升容錯 = 跨多個 AZ 部署。"},
+{n:85,c:"安全/身分",multi:"Select 3",en:"Which of the following security requirements are managed by AWS? Select 3 answers from the options given below.",zh:"哪些安全項目由「AWS」負責？（選3）",opts:["A. Password Policies","B. User permissions","C. Physical security","D. Disk disposal","E. Hardware patching"],ans:"C, D, E",key:"AWS 管 = 實體安全、硬碟銷毀、硬體修補。"},
+{n:86,c:"架構原則",en:'Which of the following terms relate to "Creating systems that scale to the required capacity based on changes in demand"',zh:"「依需求擴縮容量的系統」屬於？",opts:["A. Disaster Recovery","B. Elasticity","C. Decoupling","D. Aggregation"],ans:"B",key:"依需求擴縮 = 彈性（Elasticity）。"},
+{n:87,c:"運算",en:"Your company is planning to offload some of the batch processing workloads on to AWS. These jobs can be interrupted and resumed at any time. Which of the following instance types would be the most cost effective to use for this purpose.",zh:"可中斷/續跑的批次工作，最省成本的執行個體？",opts:["A. On-Demand","B. Spot","C. Full Upfront Reserved","D. Partial Upfront Reserved"],ans:"B",key:"可中斷批次 = Spot。"},
+{n:88,c:"安全/身分",en:"Which of the following needs a user name and password to access AWS resources.",zh:"哪個需要帳號密碼來存取 AWS 資源？",opts:["A. AWS Management Console","B. AWS Application Programming Interface (API)","C. AWS Software Development Kit (SDK)","D. AWS CLI"],ans:"A",key:"帳密登入 = Management Console。（API/SDK/CLI 用金鑰）"},
+{n:89,c:"計費/支援",en:"Your company is planning to use the AWS Cloud. But there is a management decision that resources need to split department wise. And the decision is tending towards managing multiple AWS accounts. Which of the following would help in effective management and also provide an efficient costing model.",zh:"依部門切分多帳戶並有效計費，用哪個？",opts:["A. AWS organizations","B. Amazon Dev Pay","C. AWS Trusted Advisor","D. AWS Cost Explorer"],ans:"A",key:"多帳戶政策管理 + 合併計費 = Organizations。"},
+{n:90,c:"安全/身分",en:"Which of the following can be used as an additional layer of security to using a user name and password when logging into the AWS Console.",zh:"登入主控台時，帳密之外的額外安全層？",opts:["A. Multi-Factor Authentication (MFA)","B. Secondary password","C. Root access privileges","D. Secondary user name"],ans:"A",key:"登入額外防護 = MFA。"},
+{n:91,c:"運算",en:"Which AWS Cloud service helps in quick deployment of resources which can make use of different programming languages such as .Net and Java?",zh:"哪個服務可用 .Net、Java 等快速部署資源？",opts:["A. AWS Elastic Beanstalk","B. AWS Elastic Compute Cloud (Amazon EC2)","C. AWS VPC","D. AWS SQS"],ans:"A",key:"快速部署/擴展應用（自動處理底層）= Elastic Beanstalk。"},
+{n:92,c:"架構原則",en:"Your company handles a crucial ecommerce application. This applications needs to have an uptime of at least 99.5%. There is a decision to move the application to the AWS Cloud. Which of the following deployment strategies can help build a robust architecture for such an application.",zh:"電商需 99.5% 可用率，哪種部署最穩固？",opts:["A. Deploying the application across multiple VPC's","B. Deploying the application across multiple Regions","C. Deploying the application across Edge locations","D. Deploying the application across multiple subnets"],ans:"B",key:"高可用/災備強固 = 跨多個 Region 部署。"},
+{n:93,c:"計費/支援",en:"Which of the following initiatives from AWS helps organizations reduce the overall expenditure for IT companies when they host resources on the AWS Cloud?",zh:"哪項 AWS 措施有助降低整體 IT 支出？",opts:["A. They decommission older hardware","B. They continually reduce the cost of cloud computing","C. They use better security mechanisms so you don't need to think about security at all","D. They allow deployment of multiple resources"],ans:"B",key:"AWS 持續調降雲端運算價格（規模經濟）。"},
+{n:94,c:"網路/CDN",en:"You are planning on deploying a video based application onto the AWS Cloud. These videos will be accessed by users across the world. Which of the below services can help stream the content in an efficient manner to the users across the globe?",zh:"把影片有效率串流給全球使用者？",opts:["A. Amazon SES","B. Amazon Cloudtrail","C. Amazon CloudFront","D. Amazon S3"],ans:"C",key:"全球串流 = CloudFront。"},
+{n:95,c:"資料庫",en:"Which of the following is a fully managed NoSQL database service available in AWS.",zh:"哪個是 AWS 全託管 NoSQL 資料庫？",opts:["A. AWS DynamoDB","B. AWS RDS","C. AWS Redshift","D. AWS MongoDB"],ans:"A",key:"NoSQL = DynamoDB。"},
+{n:96,c:"儲存",en:"Which of the following storage options is best when you want to store archive data?",zh:"封存資料最佳的儲存選項？",opts:["A. Amazon Storage Gateway","B. Amazon Glacier","C. Amazon EBS","D. Amazon S3"],ans:"B",key:"封存 = Glacier。"},
+{n:97,c:"運算",en:"If there is a requirement to host EC2 Instances in the AWS Cloud wherein the utilization is guaranteed to be consistent for a long period of time, which of the following would you utilize to ensure costs are minimized?",zh:"EC2 長期穩定使用，如何最省成本？",opts:["A. Reserved instances","B. On-demand instances","C. Spot instances","D. Regular instances"],ans:"A",key:"長期穩定 = Reserved。"},
+{n:98,c:"網路/CDN",en:"Which of the following services helps provide a dedicate connection from on-premise infrastructure to resources hosted in the AWS Cloud.",zh:"哪個提供地端到 AWS 的專屬連線？",opts:["A. AWS VPC","B. AWS VPN","C. AWS Direct Connect","D. AWS Subnets"],ans:"C",key:"專線（穩定/高頻寬）= Direct Connect。"},
+{n:99,c:"監控/管理",en:"Which of the following is not a category recommendation given by the AWS Trusted Advisor?",zh:"下列何者「不是」Trusted Advisor 的類別？",opts:["A. Security","B. High Availability","C. Cost Optimization","D. Performance","E. Fault tolerance"],ans:"B",key:"TA 四類 = 安全/成本/效能/容錯，不含「高可用」。"},
+{n:100,c:"儲存",en:"A company is deploying a two-tier, highly available web application to AWS. The application needs a storage layer to store artefacts such as photos and videos. Which of the following services can be used as the underlying storage mechanism.",zh:"兩層式應用，照片影片的儲存層用？",opts:["A. Amazon EBS volume","B. Amazon S3","C. Amazon EC2 instance store","D. Amazon RDS instance"],ans:"B",key:"媒體/靜態檔案 = S3。"},
+{n:101,c:"安全/身分",en:"When giving permission to users via the AWS Identity and Access Management tool, which of the following principles should be applied when granting permissions",zh:"在 IAM 授權時應套用哪個原則？",opts:["A. Principle of least privilege","B. Principle of greatest privilege","C. Principle of most privilege","D. Principle of lower privilege"],ans:"A",key:"授權原則 = 最小權限。"},
+{n:102,c:"運算",en:"Which of the below mentioned services is equivalent to hosting virtual servers on an on-premises location?",zh:"哪個相當於在地端託管虛擬伺服器？",opts:["A. AWS IAM","B. AWS Server","C. AWS EC2","D. AWS Regions"],ans:"C",key:"等同地端虛擬伺服器 = EC2。"},
+{n:103,c:"安全/身分",multi:"Choose 2",en:"You have a set of EC2 Instances hosted on the AWS Cloud. The EC2 Instances are hosting a web application. If you get a DDoS attack from the internet which of the following can help in reducing the overall threat to your EC2 Instances. Choose 2 from below:",zh:"降低 EC2 受 DDoS 威脅？（選2）",opts:["A. Usage of Security Groups","B. Usage of AWS Config","C. Usage of Network Access Control Lists","D. Usage of the Internet gateway"],ans:"A, C",key:"降 DDoS（網路層防護）= 安全群組 + NACL。"},
+{n:104,c:"運算",en:"Your company currently uses VM Templates to spin up virtual machines on their on-premise infrastructure. Which of the following can be used in a similar way to spin up EC2 instances on the AWS Cloud.",zh:"相當於 VM 範本、用來開 EC2 的是？",opts:["A. EBS Volumes","B. EBS Snapshots","C. Amazon Machines Images","D. Amazon VMware"],ans:"C",key:"VM 範本 = AMI。"},
+{n:105,c:"儲存",en:"Which of the below cannot be used to get data onto Amazon Glacier.",zh:"哪個「不能」用來上傳資料到 Glacier？",opts:["A. AWS Glacier API","B. AWS Console","C. AWS Glacier SDK","D. AWS S3 Lifecycle policies"],ans:"B",key:"主控台不能直接上傳 Glacier（只能建 vault）。"},
+{n:106,c:"計費/支援",en:"Your company is planning to pay for an AWS Support plan. They have the following requirements as far as the support plan goes 24x7 access to Cloud Support Engineers via email, chat & phone. A response time of less than 1 hour for any critical faults. Which of the following plans will suffice keeping in mind the cost factor.",zh:"需 24x7 信箱/聊天/電話 + 關鍵故障 1 小時內，顧及成本？",opts:["A. Basic","B. Developer","C. Business","D. Enterprise"],ans:"D",key:"題庫答案 = Enterprise。（註：Business 也提供電話/聊天且生產系統停機 <1hr，現實中 C 常更省；依本題庫選 D）"},
+{n:107,c:"網路/CDN",multi:"Choose 3",en:"Which of the following are features of an edge location. Choose 3 answers from the options given below",zh:"哪些是邊緣節點的功能？（選3）",opts:["A. Distribute content to users","B. Cache common responses","C. Distribute load across multiple resources","D. Used in conjunction with the Cloudfront service"],ans:"A, B, D",key:"edge 功能 = 分送內容 / 快取 / 搭配 CloudFront。不含負載分散。"},
+{n:108,c:"儲存",en:"Which of the following storage options provides the option of Lifecycle policies that can be used to move objects to archive storage.",zh:"哪個儲存可用生命週期政策把物件搬到封存？",opts:["A. Amazon S3","B. Amazon Glacier","C. Amazon Storage Gateway","D. Amazon EBS"],ans:"A",key:"S3 生命週期可自動轉 IA / Glacier 並過期刪除。"},
+{n:109,c:"資料庫",multi:"Choose 2",en:"Which of the following features of Amazon RDS allows for better availability of databases. Choose 2 from below:",zh:"哪些 RDS 功能提升資料庫可用性？（選2）",opts:["A. VPC Peering","B. Multi-AZ","C. Read Replica's","D. Multi-Region"],ans:"B, C",key:"RDS 可用性 = Multi-AZ（容錯）+ Read Replica（讀取擴展）。"},
+{n:110,c:"運算",en:"There is a requirement hosting a set of servers in the Cloud for a short period of 6 months. Which of the following types of instances should be chosen to be cost effective.",zh:"伺服器只用 6 個月，哪種最省？",opts:["A. Spot Instances","B. On-Demand","C. No Upfront costs Reserved","D. Partial Upfront costs Reserved"],ans:"B",key:"短期（6 個月）= On-Demand。"},
+{n:111,c:"遷移",en:"Which of the following from AWS can be used to transfer petabytes of data from on-premise locations to the AWS Cloud.",zh:"哪個可把 PB 級資料從地端搬到 AWS？",opts:["A. AWS Import/Export","B. AWS EC2","C. AWS Snowball","D. AWS Transfer"],ans:"C",key:"PB 級實體搬遷 = Snowball（安全裝置運送）。"},
+{n:112,c:"計費/支援",multi:"Choose 2",en:"When working with the AWS Cloud which of the following are headaches you don't need to worry about. Choose 2 from below:.",zh:"用 AWS 後「不必煩惱」的事？（選2）",opts:["A. Having complete control over the physical infrastructure, so you don't need to worry about what AWS is doing.","B. Having the pay as you go model, so you don't need to worry if you are burning costs for non-running resources.","C. No Upfront costs","D. Having no need to worry about security"],ans:"B, C",key:"不必煩惱 = 按用付費 + 無前期成本。（安全仍是共同責任）"},
+{n:113,c:"遷移",en:"Your company wants to move an existing Oracle database to the AWS Cloud. Which of the following services can help facilitate this move.",zh:"把既有 Oracle 資料庫搬到 AWS，用哪個？",opts:["A. AWS Database Migration Service","B. AWS VM Migration Service","C. AWS Inspector","D. AWS Trusted Advisor"],ans:"A",key:"資料庫遷移 = DMS（來源庫遷移期間仍可運作）。"},
+{n:114,c:"資料庫",en:"Which of the following features of AWS RDS allows for offloading reads of the database.",zh:"哪個 RDS 功能可分擔資料庫的讀取？",opts:["A. Cross region replication","B. Creating Read Replica's","C. Using snapshots","D. Using Multi-AZ feature"],ans:"B",key:"分擔讀取 = Read Replica。"},
+{n:115,c:"架構原則",en:"Which of the following terms refers to another geographic location in AWS?",zh:"哪個名詞指 AWS 的另一個地理位置？",opts:["A. Availability Zone","B. Data center","C. Region","D. Edge location"],ans:"C",key:"地理位置 = Region。（Region 內含多個 AZ）"},
+{n:116,c:"資料庫",en:"A company wants to have a database hosted on AWS. As much as possible they want to have control over the database itself. Which of the following would be an ideal option for this.",zh:"想在 AWS 上對資料庫有最大控制權，最佳選項？",opts:["A. Using the AWS DynamoDB service","B. Using the AWS RDS service","C. Hosting on the database on an EC2 Instance","D. Using the Amazon Aurora service"],ans:"C",key:"最大控制權（自管引擎與底層）= 裝在 EC2 上。"},
+{n:117,c:"M1 雲端概念",en:"What are the advantages of cloud computing over computing on-premises?",zh:"雲端運算相較地端的優勢有哪些？",opts:["A. Avoid large capital purchases","B. Use on-demand capacity","C. Go global in minutes","D. Increase speed and agility","E. All of the above"],ans:"E",key:"雲端優勢=以上皆是。"},
+{n:118,c:"M1 雲端概念",en:"What is the pricing model that enables AWS customers to pay for resources on an as-needed basis?",zh:"讓客戶依需求付費的計價模式是？",opts:["A. Pay as you decommission","B. Pay as you go","C. Pay as you buy","D. Pay as you reserve"],ans:"B",key:"依用量付費=Pay as you go。"},
+{n:119,c:"M1 雲端概念",en:"Which of these is NOT a cloud computing model?",zh:"下列何者不是雲端運算模型？",opts:["A. Platform as a service","B. Infrastructure as a service","C. System administration as a service","D. Software as a service"],ans:"C",key:"三大模型=IaaS/PaaS/SaaS，無『系統管理即服務』。"},
+{n:120,c:"M1 雲端概念",en:"True or False? AWS owns and maintains the network-connected hardware required for application services, while you provision and use what you need.",zh:"是非題：AWS 擁有並維護應用服務所需的連網硬體，你只佈建並使用所需資源。",opts:["A. True","B. False"],ans:"A",key:"對：硬體由 AWS 維護，你只佈建所需。"},
+{n:121,c:"M1 雲端概念",en:"Which of these is NOT a benefit of cloud computing over on-premises computing?",zh:"下列何者不是雲端相較地端的好處？",opts:["A. Increase speed and agility","B. Pay for racking, stacking, and powering servers","C. Eliminate guessing on your infrastructure capacity needs","D. Trade capital expense for variable expense","E. Benefit from massive economies of scale"],ans:"B",key:"上架/堆疊/供電伺服器是地端負擔，非雲端好處。"},
+{n:122,c:"M1 雲端概念",multi:"Choose 2",en:"Which of the following are NOT benefits of AWS cloud computing? (Choose two)",zh:"下列何者不是 AWS 雲端的好處？（選2）",opts:["A. Multiple procurement cycles","B. High availability","C. High latency","D. Temporary and disposable resources","E. Fault-tolerant databases"],ans:"A, C",key:"非好處=多重採購週期、高延遲。"},
+{n:123,c:"M1 雲端概念",en:"Which of the following is a compute service?",zh:"下列何者是運算服務？",opts:["A. Amazon VPC","B. Amazon S3","C. Amazon EC2","D. Amazon CloudFront","E. Amazon Redshift"],ans:"C",key:"運算服務=EC2。"},
+{n:124,c:"M1 雲端概念",en:"True or False? Cloud computing provides access to servers, storage, databases and applications over the internet. You own the network-connected hardware and AWS provisions what you need.",zh:"是非題：雲端透過網路提供服務；硬體由你擁有，AWS 佈建你所需。",opts:["A. True","B. False"],ans:"B",key:"錯：硬體由 AWS 擁有，不是你。"},
+{n:125,c:"M1 雲端概念",en:"Economies of scale result from ___.",zh:"規模經濟來自於 ___。",opts:["A. having many different cloud providers","B. having hundreds of thousands of customers aggregated in the cloud","C. having hundreds of cloud services available over the internet","D. having to invest heavily in data centres and servers"],ans:"B",key:"規模經濟=數十萬客戶用量匯聚攤低成本。"},
+{n:126,c:"M1 雲端概念",multi:"Choose 3",en:"Which of these are ways to access AWS core services? (Choose three)",zh:"存取 AWS 核心服務的方式有哪些？（選3）",opts:["A. Technical support calls","B. AWS Marketplace","C. AWS Management Console","D. AWS Command Line Interface (AWS CLI)","E. Software Development Kits (SDKs)"],ans:"C, D, E",key:"存取方式=Console、CLI、SDK。"},
+{n:127,c:"M2 計費/支援",multi:"Choose 3",en:"For services like Amazon EC2 and Amazon RDS, you can invest in Reserved capacity. What options are available for Reserved Instances? (Choose three)",zh:"EC2、RDS 的預留執行個體有哪些付款選項？（選3）",opts:["A. AURI","B. MURI","C. NURI","D. PURI","E. DURI"],ans:"A, C, D",key:"RI 付款=All/No/Partial Upfront（AURI/NURI/PURI）。"},
+{n:128,c:"M2 計費/支援",en:"Where can a customer go to get more details about Amazon EC2 billing activity that took place 3 months ago?",zh:"想看三個月前 EC2 帳單明細，去哪？",opts:["A. Amazon EC2 dashboard","B. AWS Cost Explorer","C. AWS Trusted Advisor dashboard","D. AWS CloudTrail logs stored in Amazon S3"],ans:"B",key:"歷史帳單=Cost Explorer（可看近13個月）。"},
+{n:129,c:"M2 計費/支援",en:"True or False? To receive the discounted rate associated with Reserved Instances, you must make a full, upfront payment for the term of the agreement.",zh:"是非題：要拿 RI 折扣必須全額預付整個合約期。",opts:["A. True","B. False"],ans:"B",key:"錯：RI 也可部分預付或無預付。"},
+{n:130,c:"M2 計費/支援",en:"Which statement is true about the pricing model on AWS?",zh:"關於 AWS 計價模式，哪句正確？",opts:["A. In most cases, there is a per gigabyte charge for inbound data transfer.","B. Storage is typically charged per gigabyte.","C. Compute is typically charged as a monthly fee based on instance type.","D. Outbound charges are free up to a per account limit."],ans:"D",key:"題庫答案D；註：B（儲存按GB計費）其實也成立。"},
+{n:131,c:"M2 計費/支援",en:"What are the four support plans offered by AWS Support?",zh:"AWS 提供哪四種支援方案？",opts:["A. Basic, Developer, Business, Enterprise","B. Basic, Startup, Business, Enterprise","C. Free, Bronze, Silver, Gold","D. All support is free"],ans:"A",key:"四方案=Basic/Developer/Business/Enterprise。"},
+{n:132,c:"M2 計費/支援",en:"What AWS tool lets you explore AWS services and create an estimate for the cost of your use cases on AWS?",zh:"哪個工具可探索服務並估算使用情境成本？",opts:["A. AWS Pricing Calculator","B. AWS Budgets","C. AWS Cost and Usage Report","D. AWS Billing Dashboard"],ans:"A",key:"預估成本=Pricing Calculator。"},
+{n:133,c:"M2 計費/支援",en:"As AWS grows, the cost of doing business is reduced and savings are passed back to the customer with lower pricing. What is this called?",zh:"AWS 規模擴大、成本下降並降價回饋客戶，這叫什麼？",opts:["A. Expenditure awareness","B. Economies of scale","C. Matching supply and demand","D. EC2 Right sizing"],ans:"B",key:"規模經濟=Economies of scale。"},
+{n:134,c:"M2 計費/支援",en:"True or False? AWS offers a variety of services at no charge (e.g. VPC, IAM, Consolidated Billing, Elastic Beanstalk, Auto Scaling, OpsWorks, CloudFormation), but you may be charged for other services used with them.",zh:"是非題：部分服務免費，但搭配使用的其他服務可能收費。",opts:["A. True","B. False"],ans:"A",key:"對：這些服務本身免費，搭配的資源才收費。"},
+{n:135,c:"M2 計費/支援",multi:"Choose 2",en:"What are the benefits of using AWS Organizations? (Choose two)",zh:"使用 AWS Organizations 的好處？（選2）",opts:["A. Replaces existing IAM policies with SCPs which are simpler to manage","B. Provides the ability to create groups of accounts and then attach policies to a group","C. Provides the ability to create an unlimited number of nested OUs","D. Simplifies automating account creation and management by using APIs","E. Prevents any restrictions from being put on the root user"],ans:"B, D",key:"Organizations=帳戶分組套政策 + API自動化建帳戶。"},
+{n:136,c:"M2 計費/支援",en:"True or False? Unlimited services are available with the AWS Free Tier to new AWS customers for 12 months following sign-up.",zh:"是非題：新客戶可在註冊後12個月免費無限使用所有服務。",opts:["A. True","B. False"],ans:"B",key:"錯：免費方案有用量上限，非無限。"},
+{n:137,c:"M3 全球基礎設施",en:"Which component of the AWS Global Infrastructure does Amazon CloudFront use to ensure low-latency delivery?",zh:"CloudFront 用哪個基礎設施元件達成低延遲？",opts:["A. AWS Regions","B. AWS edge locations","C. AWS Availability Zones","D. Amazon VPC"],ans:"B",key:"CloudFront 低延遲=edge locations。"},
+{n:138,c:"M3 全球基礎設施",en:"You can run applications and workloads from a Region closer to end users to ___ latency.",zh:"在離使用者較近的 Region 執行可 ___ 延遲。",opts:["A. increase","B. decrease"],ans:"B",key:"離使用者近=降低延遲。"},
+{n:139,c:"M3 全球基礎設施",en:"True or False? Networking, storage, compute, and databases are examples of service categories that AWS offers.",zh:"是非題：網路、儲存、運算、資料庫都是 AWS 的服務類別。",opts:["A. True","B. False"],ans:"A",key:"對：皆為 AWS 服務類別。"},
+{n:140,c:"M3 全球基礎設施",en:"Which of the following are geographic areas that host two or more Availability Zones?",zh:"哪個是承載兩個以上可用區的地理區域？",opts:["A. AWS Origins","B. AWS Regions","C. Compute zones","D. Edge locations"],ans:"B",key:"含多個AZ的地理區域=Region。"},
+{n:141,c:"M3 全球基礎設施",en:"___ means infrastructure has built-in component redundancy and ___ means resources dynamically adjust to changes in capacity requirements.",zh:"前者指內建元件冗餘，後者指資源依容量需求動態調整。",opts:["A. No human intervention, fault tolerant","B. Elastic and scalable, no human intervention","C. Fault tolerant, elastic and scalable","D. Fault tolerant, no human intervention","E. Elastic and scalable, fault tolerant"],ans:"C",key:"內建冗餘=容錯；動態調整=彈性可擴展。"},
+{n:142,c:"M3 全球基礎設施",en:"True or False? Availability Zones within a Region are connected through low-latency links.",zh:"是非題：同一 Region 內的可用區以低延遲連結相連。",opts:["A. True","B. False"],ans:"A",key:"對：AZ間以低延遲高速連結相連。"},
+{n:143,c:"M3 全球基礎設施",en:"Which of these statements about Availability Zones is NOT true?",zh:"關於可用區，哪句不正確？",opts:["A. Availability Zones are designed for fault isolation.","B. Availability Zones are made up of one or more data centres.","C. A data centre can be used for more than one Availability Zone.","D. Availability Zones are connected using high-speed private links."],ans:"C",key:"錯誤敘述=一個資料中心不會同屬多個AZ。"},
+{n:144,c:"M3 全球基礎設施",multi:"Choose 2",en:"What is true about Regions? (Choose two)",zh:"關於 Region，哪些正確？（選2）",opts:["A. A Region is a physical location that has multiple Availability Zones.","B. Each Region is located in a separate geographic area.","C. All Regions are located in one specific geographic area.","D. They are the physical location of your customers."],ans:"A, B",key:"Region=含多AZ的實體位置、各自在不同地理區。"},
+{n:145,c:"M3 全球基礎設施",en:"AWS highly recommends provisioning your compute resources across ___ Availability Zones.",zh:"AWS 強烈建議將運算資源佈建在 ___ 可用區。",opts:["A. no","B. single","C. multiple","D. all"],ans:"C",key:"建議跨多個AZ部署以提升可用性。"},
+{n:146,c:"M3 全球基礎設施",en:"True or False? Edge locations are only located in the same general area as Regions.",zh:"是非題：邊緣節點只設在與 Region 相同的區域。",opts:["A. True","B. False"],ans:"B",key:"錯：edge節點遍布全球、比Region多很多。"},
+{n:147,c:"M4 IAM/安全",en:"In the shared responsibility model, AWS is responsible for providing what?",zh:"共同責任模型中，AWS 負責提供什麼？",opts:["A. Security of the cloud.","B. Security to the cloud.","C. Security for the cloud.","D. Security in the cloud."],ans:"A",key:"AWS負責『雲本身』的安全(of the cloud)。"},
+{n:148,c:"M4 IAM/安全",multi:"Choose 2",en:'In the shared responsibility model, which are examples of "security in the cloud"? (Choose two)',zh:"哪些是『雲中的安全』例子？（選2）",opts:["A. Compliance with compute security standards and regulation.","B. Physical security of the facilities.","C. Security group configurations.","D. Encryption of data at rest and data in transit.","E. Protecting the global infrastructure."],ans:"C, D",key:"客戶責任=安全群組設定、資料加密。"},
+{n:149,c:"M4 IAM/安全",en:"Which is the responsibility of AWS under the shared responsibility model?",zh:"共同責任模型下，哪項是 AWS 的責任？",opts:["A. Configuring third party applications.","B. Maintaining physical hardware.","C. Securing application access and data.","D. Managing custom AMIs."],ans:"B",key:"AWS責任=維護實體硬體。"},
+{n:150,c:"M4 IAM/安全",multi:"Choose 2",en:"When creating an IAM policy, what are the two types of access that can be granted to a user? (Choose two)",zh:"建立 IAM 政策時，可授予使用者哪兩種存取類型？（選2）",opts:["A. Institutional Access.","B. Authorized Access.","C. Programmatic Access.","D. AWS Management Console Access.","E. Administrative Root Access."],ans:"C, D",key:"兩種存取=程式化(access key) + 主控台(帳密)。"},
+{n:151,c:"M4 IAM/安全",en:"True or False? AWS Organizations enables you to consolidate multiple AWS accounts so that you centrally manage them.",zh:"是非題：Organizations 可整合多帳戶集中管理。",opts:["A. True","B. False"],ans:"A",key:"對：Organizations集中管理多帳戶。"},
+{n:152,c:"M4 IAM/安全",multi:"Choose 2",en:"Which are best practices to secure your account using IAM? (Choose two)",zh:"用 IAM 保護帳戶的最佳實務？（選2）",opts:["A. Provide users with default administrative privileges.","B. Leave unused and unnecessary users and credentials in place.","C. Manage access to AWS resources.","D. Avoid using IAM groups to grant the same access to multiple users.","E. Define fine-grained access rights."],ans:"C, E",key:"最佳實務=管理資源存取 + 細緻權限。"},
+{n:153,c:"M4 IAM/安全",en:"Which of the following should be done by the AWS account root user?",zh:"哪件事應由 root 帳戶執行？",opts:["A. Secure access for applications.","B. Integrate with other AWS services.","C. Change granular permissions.","D. Change the AWS support plan."],ans:"D",key:"root專屬=變更支援方案等少數帳戶層級任務。"},
+{n:154,c:"M4 IAM/安全",en:"After initial login, what does AWS recommend as best practice for the root user?",zh:"首次登入後，AWS 建議對 root 使用者做什麼？",opts:["A. Delete the AWS account root user.","B. Revoke all permissions on the root user.","C. Restrict permissions on the root user.","D. Delete the access keys of the root user."],ans:"D",key:"刪除root的access key（並啟用MFA）。"},
+{n:155,c:"M4 IAM/安全",en:"How would a system administrator add an additional layer of login security to a user's AWS Management Console?",zh:"如何為使用者的主控台登入再加一層安全？",opts:["A. Use Amazon Cloud Directory.","B. Audit IAM roles.","C. Enable multi-factor authentication.","D. Enable AWS CloudTrail."],ans:"C",key:"額外登入防護=啟用MFA。"},
+{n:156,c:"M4 IAM/安全",en:"True or False? AWS KMS enables you to assess, audit, and evaluate the configurations of your AWS resources.",zh:"是非題：AWS KMS 可評估、稽核、評鑑資源組態。",opts:["A. True","B. False"],ans:"B",key:"錯：評估組態是AWS Config；KMS是金鑰管理。"},
+{n:157,c:"M5 網路VPC",en:"With Amazon VPC, what is the smallest size subnet you can have?",zh:"VPC 中最小的子網大小是？",opts:["A. /28","B. /26","C. /30","D. /24"],ans:"A",key:"最小子網=/28（16個IP）。"},
+{n:158,c:"M5 網路VPC",en:"With Amazon VPC, what is the maximum size IP address range you can have?",zh:"VPC 可有的最大 IP 範圍是？",opts:["A. /24","B. /16","C. /28","D. /30"],ans:"B",key:"最大VPC範圍=/16（65536個IP）。"},
+{n:159,c:"M5 網路VPC",en:"You need to allow resources in a private subnet to access the internet. Which must be present?",zh:"要讓私有子網的資源連外網，需要什麼？",opts:["A. Security groups.","B. Route tables.","C. NAT gateway.","D. Network access control lists."],ans:"C",key:"私有子網連外=NAT gateway。"},
+{n:160,c:"M5 網路VPC",en:"Which AWS networking service enables a company to create a virtual network within AWS?",zh:"哪個服務讓公司在 AWS 內建立虛擬網路？",opts:["A. Amazon VPC.","B. AWS Config.","C. Amazon Route 53.","D. AWS Direct Connect."],ans:"A",key:"虛擬網路=VPC。"},
+{n:161,c:"M5 網路VPC",en:"True or False? Private subnets have direct access to the internet.",zh:"是非題：私有子網可直接連外網。",opts:["A. True","B. False"],ans:"B",key:"錯：私有子網無直接外網存取。"},
+{n:162,c:"M5 網路VPC",en:"Which component of AWS Global Infrastructure does Amazon CloudFront use to ensure low-latency delivery?",zh:"CloudFront 用哪個元件達成低延遲？",opts:["A. Amazon VPC.","B. AWS Availability Zones.","C. AWS Regions.","D. AWS Edge Locations."],ans:"D",key:"CloudFront低延遲=Edge Locations。"},
+{n:163,c:"M5 網路VPC",en:"Which is an optional security control that can be applied at the subnet layer of a VPC?",zh:"哪個是可套用在 VPC 子網層的選用安全控制？",opts:["A. Firewall.","B. Network ACL.","C. Web application firewall.","D. Security group."],ans:"B",key:"子網層防火牆=Network ACL；安全群組在執行個體層。"},
+{n:164,c:"M5 網路VPC",en:"What happens when you use Amazon VPC to create a new VPC?",zh:"用 VPC 建立新 VPC 時會發生什麼？",opts:["A. An internet gateway is created by default.","B. Three subnets are created by default in one Availability Zone.","C. Three subnets are created by default: one for each Availability Zone.","D. A main route table is created by default."],ans:"D",key:"建VPC會自動建main route table（不自動建IGW/子網）。"},
+{n:165,c:"M5 網路VPC",en:"Which of the following can be used to protect Amazon EC2 instances hosted in AWS?",zh:"哪個可用來保護 EC2 執行個體？",opts:["A. AMI.","B. All of the above.","C. Security group.","D. Internet Gateway."],ans:"C",key:"保護EC2=安全群組（執行個體層防火牆）。"},
+{n:166,c:"M5 網路VPC",en:"You create a VPC with CIDR block 10.0.1.0/24 (256 total IP addresses). How many IP addresses are available?",zh:"VPC 用 10.0.1.0/24（共256個IP），可用幾個？",opts:["A. 246.","B. 251.","C. 256.","D. 250."],ans:"B",key:"/24可用=256-5(AWS保留)=251。"},
+{n:167,c:"M6 運算",en:"Why is AWS more economical than traditional data centers for applications with varying compute workloads?",zh:"為何對變動工作負載 AWS 比傳統機房划算？",opts:["A. Amazon EC2 costs are billed monthly.","B. Customers retain full administrative access to their instances.","C. Customers can permanently run enough instances to handle peak workloads.","D. Amazon EC2 instances can be launched on-demand when needed."],ans:"D",key:"可隨需啟動EC2，不必為尖峰常備機器。"},
+{n:168,c:"M6 運算",en:"If your project requires monthly reports iterating through very large amounts of data, which EC2 purchasing option should you consider?",zh:"每月需處理大量資料的報表，該用哪種 EC2 採購選項？",opts:["A. Spot Instances.","B. Scheduled Reserved Instances.","C. Dedicated Hosts.","D. On-Demand Instances."],ans:"B",key:"可預期、週期性=Scheduled Reserved Instances。"},
+{n:169,c:"M6 運算",en:"What is included in an Amazon Machine Image (AMI)?",zh:"AMI 包含哪些內容？",opts:["A. A template for the root volume for the instance.","B. Launch permissions that control which AWS accounts can use the AMI.","C. A block device mapping that specifies the volumes to attach at launch.","D. All of the above."],ans:"D",key:"AMI=根磁碟範本+啟動權限+區塊裝置對應。"},
+{n:170,c:"M6 運算",en:"Which EC2 feature ensures your instances will not share a physical host with instances from any other AWS customer?",zh:"哪個功能確保你的執行個體不與其他客戶共用實體主機？",opts:["A. Amazon VPC.","B. Placement Groups.","C. Dedicated Instances.","D. Reserved Instances."],ans:"C",key:"不與他人共用實體主機=Dedicated Instances。"},
+{n:171,c:"M6 運算",en:"Which service is a serverless compute service in AWS?",zh:"哪個是 AWS 的無伺服器運算服務？",opts:["A. AWS Config.","B. AWS Lambda.","C. AWS OpsWorks.","D. Amazon EC2."],ans:"B",key:"無伺服器運算=Lambda。"},
+{n:172,c:"M6 運算",en:"Which AWS service enables developers to easily deploy and manage applications in the cloud (handling capacity, load balancing, scaling)?",zh:"哪個服務讓開發者輕鬆部署與管理雲端應用？",opts:["A. Amazon Elastic Container Service.","B. AWS Elastic Beanstalk.","C. AWS OpsWorks.","D. AWS CloudFormation."],ans:"B",key:"上傳程式即自動部署=Elastic Beanstalk。"},
+{n:173,c:"M6 運算",en:"Your web app needs four instances for steady traffic; on the last day of the month traffic triples. Most cost-effective way?",zh:"四台應付平時流量，月底流量變三倍，最划算做法？",opts:["A. Run 12 reserved instances all of the time.","B. Run four On-Demand constantly, add eight On-Demand on the last day.","C. Run four Reserved Instances constantly, then add eight On-Demand on the last day of each month.","D. Run four On-Demand constantly, add eight Reserved on the last day."],ans:"C",key:"穩定基線用Reserved，尖峰用On-Demand。"},
+{n:174,c:"M6 運算",en:"True or False? Containers contain an entire operating system.",zh:"是非題：容器包含整個作業系統。",opts:["A. True","B. False"],ans:"B",key:"錯：容器共用主機OS核心，不含整個OS（那是VM）。"},
+{n:175,c:"M6 運算",en:"Which EC2 option is best for long-term workload with predictable usage patterns?",zh:"長期、可預期用量的工作負載最適合哪種 EC2？",opts:["A. Spot Instances.","B. On-Demand Instances.","C. Reserved Instances."],ans:"C",key:"長期可預期=Reserved Instances。"},
+{n:176,c:"M6 運算",multi:"Choose 2",en:"Which must be specified when launching a new EC2 Windows instance? (Choose two)",zh:"啟動新 EC2 Windows 執行個體必須指定哪兩項？（選2）",opts:["A. Amazon EC2 instance type.","B. Amazon Machine Image (AMI).","C. The Amazon EC2 Instance ID.","D. Password for the administrator account."],ans:"A, B",key:"啟動必填=執行個體類型 + AMI。"},
+{n:177,c:"M7 儲存",en:"True or False? Amazon S3 is object storage suitable for storing flat files like Word documents, photos, etc.",zh:"是非題：S3 是物件儲存，適合存 Word、照片等檔案。",opts:["A. True","B. False"],ans:"A",key:"對：S3=物件儲存，適合存檔案。"},
+{n:178,c:"M7 儲存",en:"Amazon S3 replicates all objects ___.",zh:"S3 把所有物件複寫到 ___。",opts:["A. On multiple volumes within an Availability Zone.","B. In multiple Availability Zones within the same region.","C. Across multiple regions for higher durability.","D. On multiple S3 buckets."],ans:"B",key:"S3預設複寫到同region的多個AZ。"},
+{n:179,c:"M7 儲存",multi:"Choose 3",en:"Which can be used as a storage class for an S3 object lifecycle policy? (Choose three)",zh:"哪些可作為 S3 生命週期政策的儲存類別？（選3）",opts:["A. S3 Standard Access.","B. AWS Storage Gateway.","C. S3 Infrequent Access.","D. Simple Storage Service Glacier.","E. S3 Reduced Redundancy Storage.","F. Amazon DynamoDB."],ans:"A, C, D",key:"S3儲存類別=Standard / IA / Glacier。"},
+{n:180,c:"M7 儲存",en:"The name of an S3 bucket must be unique ___.",zh:"S3 儲存貯體名稱必須在 ___ 唯一。",opts:["A. Worldwide across all AWS accounts.","B. Within a region.","C. Across all your AWS accounts.","D. Within your AWS account."],ans:"A",key:"S3 bucket名稱=全球唯一。"},
+{n:181,c:"M7 儲存",en:"You can use Amazon EFS to:",zh:"Amazon EFS 可用來：",opts:["A. Provide simple, scalable file storage for use only within AWS.","B. Implement storage for EC2 instances that multiple VMs can access at the same time.","C. Host a robust CDN to deliver web sites.","D. Generate user-specific content."],ans:"B",key:"EFS=多個EC2同時共享的檔案儲存。"},
+{n:182,c:"M7 儲存",multi:"Choose 2",en:"Amazon EBS is recommended when data ___ and ___. (Choose two)",zh:"EBS 適合用於資料 ___ 與 ___。（選2）",opts:["A. Requires object level storage.","B. Must be quickly accessible, requiring long-term persistence.","C. Requires an encryption solution.","D. Needs to be stored in a different AZ than the EC2 instance."],ans:"B, C",key:"EBS=需快速存取且長期持久、可加密。"},
+{n:183,c:"M7 儲存",en:"True or False? By default all data stored in Amazon S3 is viewable by the public.",zh:"是非題：S3 資料預設公開可見。",opts:["A. True","B. False"],ans:"B",key:"錯：S3預設私有，僅擁有者可存取。"},
+{n:184,c:"M7 儲存",en:"Regarding Amazon S3 Glacier, what is a vault?",zh:"關於 S3 Glacier，vault 是什麼？",opts:["A. The rules that determine who may access archives.","B. An object (photos, videos, files, or documents).","C. A container for storing archives.","D. A policy that identifies who can access content."],ans:"C",key:"Glacier vault=存放封存(archive)的容器。"},
+{n:185,c:"M7 儲存",en:"True or False? When you create a bucket in Amazon S3, it is associated with a specific AWS Region.",zh:"是非題：建立 S3 貯體時會關聯到特定 Region。",opts:["A. True","B. False"],ans:"A",key:"對：bucket建立時綁定一個Region。"},
+{n:186,c:"M7 儲存",multi:"Choose 2",en:"Which are features of Amazon EBS? (Choose two)",zh:"哪些是 EBS 的特性？（選2）",opts:["A. Data on an EBS volume is lost when the attached instance is stopped.","B. EBS volumes can be encrypted transparently to workloads on the attached instance.","C. EBS data is automatically backed up to tape.","D. Data stored on EBS is automatically replicated within an Availability Zone."],ans:"B, D",key:"EBS=可透明加密、同AZ內自動複寫(停機不丟資料)。"},
+{n:187,c:"M8 資料庫",en:"You are designing an ecommerce web app scaling to hundreds of thousands of concurrent users. What database is best suited to hold session state?",zh:"電商需支撐數十萬並發，哪個DB最適合存session狀態？",opts:["A. Amazon RDS.","B. Amazon DynamoDB.","C. Amazon Redshift.","D. Amazon S3."],ans:"B",key:"高並發session狀態=DynamoDB(NoSQL,毫秒延遲)。"},
+{n:188,c:"M8 資料庫",en:"You need to find an item in a DynamoDB table using an attribute other than the item's primary key.",zh:"要用主鍵以外的屬性在 DynamoDB 找項目，用什麼？",opts:["A. PutItem.","B. Scan.","C. Query.","D. GetItem."],ans:"B",key:"用非主鍵搜尋=Scan（掃整表）。"},
+{n:189,c:"M8 資料庫",en:"In DynamoDB, what does the query operation enable you to do?",zh:"DynamoDB 的 query 操作能做什麼？",opts:["A. Query a table using the partition key and an optional sort key filter.","B. Query any secondary indexes that exist for a table.","C. Efficiently retrieve items from a table or secondary index.","D. All of the above."],ans:"D",key:"Query=以分割鍵(可加排序鍵)高效查表或索引。"},
+{n:190,c:"M8 資料庫",en:"Which AWS service is best for analyzing data using standard SQL and existing BI tools?",zh:"用標準SQL與BI工具分析資料，最適合哪個服務？",opts:["A. Amazon RDS.","B. Amazon S3 Glacier.","C. Amazon DynamoDB.","D. Amazon Redshift."],ans:"D",key:"SQL+BI大規模分析=Redshift(資料倉儲)。"},
+{n:191,c:"M8 資料庫",en:"In Amazon DynamoDB, an attribute is ___.",zh:"DynamoDB 中，attribute（屬性）是 ___。",opts:["A. A fundamental data element.","B. A collection of items.","C. A collection of attributes."],ans:"A",key:"attribute=最基本的資料元素(欄位)。"},
+{n:192,c:"M8 資料庫",en:"If you need a database with extremely fast performance, fast scalability, and flexible schema, which service?",zh:"需極快效能、快速擴展、彈性綱要的資料庫，選哪個？",opts:["A. Amazon RDS.","B. Amazon ElastiCache.","C. Amazon DynamoDB.","D. Amazon Redshift."],ans:"C",key:"快速+彈性綱要=DynamoDB(NoSQL)。"},
+{n:193,c:"M8 資料庫",en:"Which use case is appropriate for using Amazon RDS?",zh:"哪個情境適合用 Amazon RDS？",opts:["A. Massive read/write rates.","B. Simple get or put requests.","C. Complex transactions.","D. All of the above."],ans:"C",key:"RDS=複雜交易(關聯式、ACID)。"},
+{n:194,c:"M8 資料庫",en:"A company has a .NET app connecting to a MySQL database and wants AWS features like high availability and automated backups. Ideal database?",zh:".NET 連 MySQL，想要高可用與自動備份，最理想的DB？",opts:["A. Amazon RDS.","B. Amazon Aurora.","C. Amazon DynamoDB.","D. Amazon Redshift."],ans:"B",key:"MySQL相容+高可用=Aurora。"},
+{n:195,c:"M8 資料庫",en:"True or False? Amazon RDS automatically patches the database software and backs up your database, storing backups for a user-defined retention period and enabling point-in-time recovery.",zh:"是非題：RDS自動修補與備份，可保留並支援時間點還原。",opts:["A. True","B. False"],ans:"A",key:"對：RDS自動修補/備份/時間點還原。"},
+{n:196,c:"M8 資料庫",en:"What should you consider when choosing a database type?",zh:"選擇資料庫類型時要考量什麼？",opts:["A. Data size.","B. Data access period.","C. Query frequency.","D. Highly available.","E. All of the above."],ans:"E",key:"考量=資料量/存取期間/查詢頻率/高可用，全部。"},
+{n:197,c:"M9 架構/WAF",en:"Which is NOT one of the four areas of the Performance Efficiency pillar of the AWS Well-Architected Framework?",zh:"下列何者不是『效能效率』支柱的四個面向？",opts:["A. Traceability","B. Tradeoffs","C. Selection","D. Monitoring"],ans:"A",key:"效能效率四面向=Selection/Review/Monitoring/Tradeoffs，無Traceability。"},
+{n:198,c:"M9 架構/WAF",en:"Which is a principle when designing cloud-based systems?",zh:"設計雲端系統的原則是？",opts:["A. Build tightly-coupled components","B. Make infrequent, large batch changes","C. Assume everything will fail","D. Use as many services as possible"],ans:"C",key:"雲端設計原則=假設一切都會故障(為失敗設計)。"},
+{n:199,c:"M9 架構/WAF",multi:"Choose 3",en:"Which are pillars of the AWS Well-Architected Framework? (Choose three)",zh:"哪些是 Well-Architected Framework 的支柱？（選3）",opts:["A. Security","B. Persistence","C. Operational Excellence","D. Cost Optimization"],ans:"A, C, D",key:"支柱=安全/卓越營運/成本最佳化(及可靠性/效能/永續)。"},
+{n:200,c:"M9 架構/WAF",multi:"Choose 2",en:"Which design principles are recommended when considering performance efficiency? (Choose two)",zh:"考量效能效率時建議哪些設計原則？（選2）",opts:["A. Enable Traceability","B. Analyze and attribute expenditure","C. Democratize advanced technologies","D. Use serverless architectures","E. Match business needs"],ans:"C, D",key:"效能效率=普及先進技術 + 採用無伺服器架構。"},
+{n:201,c:"M9 架構/WAF",en:"AWS Trusted Advisor provides insight regarding which five categories?",zh:"Trusted Advisor 提供哪五大類洞察？",opts:["A. Performance, Cost Optimization, Access Control, Connectivity, Security","B. Security, Fault Tolerance, Cost Optimization, Access Control, Connectivity","C. Security, Service Limits, Cost Optimization, Access Control, Connectivity","D. Performance, Cost Optimization, Security, Fault Tolerance, Service Limits"],ans:"D",key:"TA五類=效能/成本/安全/容錯/服務限額。"},
+{n:202,c:"M9 架構/WAF",en:"What is the focus of the Sustainability pillar of the Well-Architected Framework?",zh:"永續支柱的重點是？",opts:["A. Designing workloads that recover quickly from failures","B. Minimizing the environmental impacts of running cloud workloads","C. Avoiding unnecessary costs in cloud workloads","D. Automating updates to cloud workloads"],ans:"B",key:"永續=降低雲端工作負載的環境衝擊。"},
+{n:203,c:"M9 架構/WAF",en:"After moving to AWS, which online tool can assist in security compliance?",zh:"上雲後，哪個線上工具可協助安全合規？",opts:["A. Amazon Kinesis","B. AWS Support","C. AWS Trusted Advisor","D. Amazon CloudWatch"],ans:"C",key:"安全合規檢查=Trusted Advisor。"},
+{n:204,c:"M9 架構/WAF",en:"Which is a measure of your system's ability to provide functionality when desired by the user?",zh:"哪個是衡量系統『在使用者需要時提供功能』的能力？",opts:["A. Availability","B. Fault tolerance","C. Reliability","D. Performance"],ans:"C",key:"題庫定義：Reliability=需要時能提供功能的能力。"},
+{n:205,c:"M9 架構/WAF",en:"What is defined as the ability for a system to remain operational even if some of its components fail?",zh:"系統在部分元件故障時仍能運作，這叫什麼？",opts:["A. High Durability","B. Fault Tolerance","C. High Availability","D. Scalability"],ans:"B",key:"部分元件故障仍運作=容錯(Fault Tolerance)。"},
+{n:206,c:"M9 架構/WAF",en:"Which best describes a system that withstands some degradation, has minimal downtime, and needs minimal human intervention?",zh:"能承受部分降級、停機極短、幾乎免人工介入的系統？",opts:["A. Scalability","B. Fault-tolerance","C. Elasticity","D. Highly available"],ans:"D",key:"高可用(Highly available)=停機極短、少人工介入。"},
+{n:207,c:"M10 擴展/監控",multi:"Choose 2",en:"Which AWS tools help your application scale up or down based on demand? (Choose two)",zh:"哪些工具能讓應用依需求擴縮？（選2）",opts:["A. Availability zones.","B. Amazon EC2 Auto Scaling","C. AWS CloudFormation.","D. Elastic Load Balancing","E. AWS Config."],ans:"B, D",key:"擴縮=EC2 Auto Scaling + Elastic Load Balancing。"},
+{n:208,c:"M10 擴展/監控",en:"Which service would you use to send alerts based on Amazon CloudWatch alarms?",zh:"依 CloudWatch 警報發送通知，用哪個服務？",opts:["A. Amazon SNS.","B. AWS CloudTrail.","C. AWS Trusted Advisor.","D. Amazon Route 53."],ans:"A",key:"發送警報通知=SNS(簡單通知服務)。"},
+{n:209,c:"M10 擴展/監控",multi:"Choose 3",en:"Which are characteristics of Amazon EC2 Auto Scaling? (Choose three)",zh:"EC2 Auto Scaling 的特性有哪些？（選3）",opts:["A. Only supports dynamic scaling.","B. Responds to changing conditions by adding or terminating instances.","C. Delivers push notifications.","D. Launches instances from a specified AMI.","E. Enforces a minimum number of running EC2 instances."],ans:"B, D, E",key:"Auto Scaling=依條件增減、用指定AMI啟動、維持最少數量。"},
+{n:210,c:"M10 擴展/監控",en:"Which must be configured on an Elastic Load Balancing load balancer to expect incoming traffic?",zh:"ELB 要接收進入流量必須設定什麼？",opts:["A. A port","B. A network gateway","C. A listener","D. An instance"],ans:"C",key:"ELB接收流量=設定listener(監聽器)。"},
+{n:211,c:"M10 擴展/監控",multi:"Choose 3",en:"Which elements are used to create an EC2 Auto Scaling launch configuration? (Choose three)",zh:"建立 EC2 Auto Scaling 啟動組態會用到哪些元素？（選3）",opts:["A. Amazon Machine Image (AMI)","B. Load Balancer","C. Instance type","D. Virtual Private Network (VPC)","E. Amazon EBS volumes"],ans:"A, C, E",key:"啟動組態=AMI + 執行個體類型 + EBS磁碟區。"},
+{n:212,c:"M10 擴展/監控",en:"Which service helps collect important metrics from Amazon RDS and EC2 instances?",zh:"哪個服務可收集 RDS、EC2 的重要指標？",opts:["A. Amazon Aurora","B. Amazon CloudSearch","C. Amazon CloudWatch","D. AWS Config","E. Amazon Redshift"],ans:"C",key:"收集指標=CloudWatch。"},
+{n:213,c:"M10 擴展/監控",multi:"Choose 3",en:"Which are elements of an Auto Scaling group? (Choose three)",zh:"Auto Scaling 群組的元素有哪些？（選3）",opts:["A. Minimum size","B. Healthy target","C. Desired capacity","D. Maximum size"],ans:"A, C, D",key:"ASG=最小/期望/最大數量。"},
+{n:214,c:"M10 擴展/監控",en:"There is an audit and they need a log of all access to AWS resources in the account. Which service?",zh:"稽核需要帳戶內所有資源存取的紀錄，用哪個服務？",opts:["A. Amazon CloudWatch","B. AWS CloudTrail","C. Amazon Redshift","D. Amazon CloudSearch"],ans:"B",key:"存取/API稽核紀錄=CloudTrail。"},
+{n:215,c:"M10 擴展/監控",multi:"Choose 3",en:"In Elastic Load Balancing, when the load balancer detects an unhealthy target, which are true? (Choose three)",zh:"ELB偵測到不健康目標時，哪些正確？（選3）",opts:["A. Stops routing traffic to that target","B. Resumes routing traffic to the unhealthy target before it is healthy","C. Resumes traffic to other healthy targets","D. Routes traffic to a healthy target"],ans:"A, C, D",key:"不健康目標=停止導流，只導向健康目標。"},
+{n:216,c:"M10 擴展/監控",multi:"Choose 3",en:"What are the three types of load balancers that Elastic Load Balancing offers? (Choose three)",zh:"ELB 提供哪三種負載平衡器？（選3）",opts:["A. Internet Load Balancer","B. Application Load Balancer","C. Network Load Balancer","D. Compute Load Balancer","E. Classic Load Balancer","F. Auto Scaling Load Balancer"],ans:"B, C, E",key:"ELB三種=Application / Network / Classic(+Gateway)。"}
+];
+
+const EXP={
+1:"Amazon S3 is object storage built to store and retrieve any amount of data from anywhere; designed for 99.999999999% durability. Amazon EBS provides persistent block storage volumes for use with EC2 instances, automatically replicated within its Availability Zone.",
+2:"Amazon CloudFront speeds up distribution of your static and dynamic web content (.html, .css, .js, images). CloudFront delivers content through a worldwide network of data centers called edge locations.",
+3:"One of the advantages of EC2 is per-second billing. With per-second billing you pay only for what you use; the cost of unused minutes and seconds is taken off the bill. Ideal for dev/test, data processing, analytics, batch and gaming workloads.",
+4:"Trusted Advisor is an online resource that helps you reduce cost, increase performance, and improve security by optimizing your AWS environment. It provides real-time guidance to provision resources following AWS best practices.",
+5:"Amazon CloudWatch is a monitoring service for AWS cloud resources and the applications you run on AWS. Use it to collect and track metrics, collect and monitor log files, set alarms, and automatically react to changes in your resources.",
+6:"With CloudTrail you can monitor all API activity on all AWS services. CloudTrail enables governance, compliance, operational and risk auditing, and provides an event history of account activity (Console, SDKs, CLI, other services) — simplifying security analysis and resource change tracking.",
+7:"Route 53 allows registration of new domain names. Amazon Route 53 is a highly available and scalable cloud DNS web service that translates names like www.example.com into numeric IP addresses. It is fully compliant with IPv6.",
+8:"Having services accessible through an API allows developers to easily work with the various AWS resources programmatically.",
+9:"Each AZ is a set of one or more data centers. By deploying resources to multiple Availability Zones you design with failure in mind — if one AZ goes down, the others stay up, so the application is more fault tolerant.",
+10:"AWS Identity and Access Management (IAM) is a web service that helps you securely control access to AWS resources. You use IAM to control who is authenticated (signed in) and authorized (has permissions) to use resources.",
+11:"Amazon Redshift is a fully managed, petabyte-scale data warehouse service in the cloud. You can start with a few hundred gigabytes and scale to a petabyte or more to gain new insights.",
+12:"Managing the various permissions of users, and the roles and permissions, is the responsibility of the AWS customer (security 'in' the cloud).",
+13:"Cost Explorer is a free tool to view your costs. You can view data up to the last 13 months, forecast spending for the next three months, and get Reserved Instance purchase recommendations.",
+14:"The entire control of data within an AWS account is with the Account Owner.",
+15:"The concept of decoupling is to ensure different components of an application can be managed and maintained separately. If all components are tightly coupled, when one component goes down the entire application goes down.",
+16:"Each AZ is a set of one or more data centers. By deploying to multiple Availability Zones, if one AZ goes down the others stay up — increasing the availability of the application.",
+17:"As per the Shared Responsibility model, security for users — password policies and user permissions — must be managed by the AWS customer.",
+18:"Elasticity is the ability of an application to scale up and scale down based on demand. An example of such a service is Auto Scaling.",
+19:"Spot Instances are a cost-effective choice if you can be flexible about when your applications run and if they can be interrupted. Well-suited for data analysis, batch jobs, background processing, and optional tasks.",
+20:"The AWS Management Console lets you access and manage Amazon Web Services through a simple, intuitive web-based user interface.",
+21:"Cost Explorer is a free tool to view your costs. You can see spending patterns over time, identify areas needing inquiry, view trends, specify time ranges, and view data by day or month.",
+22:"AWS Multi-Factor Authentication (MFA) is a simple best practice that adds an extra layer of protection on top of your user name and password.",
+23:"You can use IAM in the AWS Management Console to enable a virtual MFA device for an IAM user in your account.",
+24:"Businesses use AWS for faster disaster recovery of critical IT systems without the expense of a second physical site. DR architectures range from 'pilot light' to 'hot standby'. DR infrastructure should be launched in a separate Region.",
+25:"Since EC2 Instances carry a charge when running, you need to factor in the number of servers that need to be migrated to AWS when calculating TCO.",
+26:"Amazon CloudFront gives businesses and developers an easy, cost-effective way to distribute content with low latency and high transfer speeds. It is a self-service, pay-per-use offering delivered through a global network of edge locations.",
+27:"Amazon DynamoDB is a fast and flexible NoSQL database service for applications needing consistent, single-digit millisecond latency at any scale. Fully managed; supports document and key-value models.",
+28:"Amazon Glacier is a secure, durable, and extremely low-cost cloud storage service for data archiving and long-term backup. Designed for 99.999999999% durability with strong security and compliance.",
+29:"When instances are used continuously and throughout the year, the best option is Reserved Instances. By buying reserved instances you are allocated an instance for the duration you specify at a reduced cost.",
+30:"Amazon S3 Transfer Acceleration enables fast, easy, secure transfers of files over long distances between your client and an S3 bucket. It uses CloudFront's globally distributed edge locations; data is routed to S3 over an optimized network path.",
+31:"You need to take prior authorization from AWS before doing a penetration test on EC2 Instances. (Note: AWS no longer requires pre-approval for common services, but this question bank's answer is D.)",
+32:"Trusted Advisor inspects your environment and makes recommendations in four categories: Performance, Cost optimization, Security, and Fault tolerance.",
+33:"Amazon S3 is the default storage service to consider — it provides durable storage for all static content while keeping web-tier CPU usage low.",
+34:"The principle of least privilege means giving a user account only those privileges essential to perform its intended function. E.g., an account that only creates backups has rights only to run backup-related applications.",
+35:"Amazon EC2 is a web service that provides secure, resizable compute capacity in the cloud, designed to make web-scale cloud computing easier for developers (i.e., it hosts virtual servers).",
+36:"A security group acts as a virtual firewall for your instance, controlling inbound and outbound traffic. A network ACL is an optional layer of security for your VPC that acts as a firewall for one or more subnets.",
+37:"An Amazon Machine Image (AMI) provides the information required to launch an instance (a virtual server in the cloud). You can launch as many instances from an AMI as you need — this is the 'golden image'.",
+38:"Some AWS services are already PCI compliant — check this list when designing the application. Compliance is shared: the right steps must also be taken during application development.",
+39:"The AWS Console cannot upload data onto Glacier (it can only create a Glacier vault). Data can be uploaded via the Glacier API, the Glacier SDK, or S3 Lifecycle policies.",
+40:"Only the Enterprise support plan provides access to a Support Concierge.",
+41:"Only the Enterprise support plan meets a response time of less than 15 minutes for business-critical systems.",
+42:"The Edge location does not distribute load — that is the load balancer's job. Edge locations are used in conjunction with CloudFront to cache objects and deliver content.",
+43:"Amazon S3 is the ideal storage option. It also provides the facility of assigning a URL to each object, which can be used to download the object.",
+44:"If the database will be used for at least one year, Reserved Instances are better. You save on costs, and a partial upfront option gives a better discount.",
+45:"Since the requirement is just for 3 months, the most cost-effective option is On-Demand Instances.",
+46:"When you define security rules for EC2 Instances, the customer gives a name and description and writes the rules for the security group.",
+47:"Physical infrastructure is AWS's responsibility, so that's not an advantage of moving to the cloud; and security is a shared responsibility, not something to ignore. The real advantages are the pay-as-you-go model and no upfront costs.",
+48:"With CloudTrail you can monitor all API activity. CloudTrail enables governance, compliance, operational and risk auditing, providing an event history of account activity — useful for an external audit of all access.",
+49:"You can use the Read Replica feature to ensure data is replicated to another region (cross-region read replicas).",
+50:"Regions correspond to different geographic locations in AWS. To create snapshots in another geographic location, create them in another Region.",
+51:"A self-managed database means you want complete control over the database engine and the underlying infrastructure — so you host the database on an EC2 Instance.",
+52:"Amazon Aurora is a fully managed, MySQL- and PostgreSQL-compatible relational database engine. It delivers up to 5x the throughput of MySQL and 3x of PostgreSQL, and its storage grows automatically.",
+53:"Elasticity is the ability to scale up and down based on demand — diverting traffic to instances based on demand and to instances with the least load (e.g., via Auto Scaling).",
+54:"A load balancer distributes incoming application traffic across multiple EC2 instances in multiple Availability Zones, increasing fault tolerance. ELB detects unhealthy instances and routes traffic only to healthy ones.",
+55:"AWS Auto Scaling monitors your applications and automatically adjusts capacity to maintain steady, predictable performance at the lowest possible cost — scaling resources up/down based on demand.",
+56:"Use the TCO calculator to compare the cost of running applications on-premises or in colocation versus AWS. You describe your on-premises configuration to produce a detailed cost comparison.",
+57:"Creating snapshots of EBS Volumes ensures you have a backup of your EBS volume in place — a customer responsibility.",
+58:"The AWS SDK can be plugged in for various programming languages; using the SDK you can call the required AWS services.",
+59:"An IAM role is an AWS identity with permission policies, but unlike a user it has no standard long-term credentials. When assumed, temporary security credentials are created dynamically — the secure way for EC2 to call AWS services.",
+60:"Consolidated billing in AWS Organizations consolidates payment for multiple accounts. You see a combined view of charges and can get a cost report per member account. It is offered at no additional charge.",
+61:"To mitigate DDoS, minimize the attackable surface — e.g., place resources behind CDNs (CloudFront) or load balancers, and use AWS Shield. Firewalls/ACLs control what traffic reaches your applications.",
+62:"AWS WAF is a web application firewall that lets you monitor HTTP/HTTPS requests forwarded to CloudFront or an Application Load Balancer, and control access to your content.",
+63:"AWS MFA adds an extra layer of protection on top of your user name and password. When signing in, the user provides their password (what they know) plus a code from their MFA device (what they have).",
+64:"The DR spectrum runs from Backup & Restore → Pilot light → Warm standby. The further along the spectrum, the less downtime; of the options, Warm standby has the lowest downtime. (Full spectrum's lowest is Multi-site/Hot standby.)",
+65:"Amazon S3 is object storage built to store and retrieve any amount of data from anywhere; designed for 99.999999999% durability.",
+66:"An Amazon EBS volume is a durable, block-level storage device you can attach to a single EC2 instance. Use it as primary storage for data that requires frequent updates (e.g., a system drive or database).",
+67:"Amazon VPC lets you launch AWS resources into a virtual network you define — closely resembling a traditional data-center network, with the benefits of AWS's scalable infrastructure.",
+68:"Amazon SQS offers a reliable, highly-scalable hosted queue for storing messages as they travel between applications or microservices. It moves data between distributed components and helps you decouple them.",
+69:"Amazon CloudFront speeds up distribution of static and dynamic content, delivering it through a worldwide network of data centers called edge locations.",
+70:"One of the advantages of EC2 is per-second billing. With per-second billing you pay only for what you use; the cost of unused minutes/seconds is removed from the bill.",
+71:"Trusted Advisor provides real-time guidance to provision resources following best practices; AWS Inspector can inspect EC2 Instances against common threats. Both assist with security compliance.",
+72:"Amazon CloudWatch is a monitoring service for AWS cloud resources. Use it to collect and track metrics (from RDS, EC2, etc.), monitor logs, set alarms, and react to changes.",
+73:"With CloudTrail you can monitor all API activity. It enables governance, compliance, operational and risk auditing, providing an event history of account activity — a complete audit trail of services used.",
+74:"Route 53 is AWS's DNS service. When a disaster occurs, you can easily switch to secondary sites using Route 53, which routes end users to applications by translating names into IP addresses.",
+75:"The CLI lets developers easily work with the various AWS resources programmatically.",
+76:"Each AZ is a set of one or more data centers; deploying across multiple AZs designs for failure. For DR you can run resources in other Regions, and the Elastic Load Balancer distributes load to multiple backend instances within a region.",
+77:"AWS IAM is a web service that helps you securely control access to AWS resources — controlling who is authenticated and authorized, including managing users and groups.",
+78:"AWS CloudFormation helps you model and set up your AWS resources. You create a template describing all the resources you want, and CloudFormation provisions and configures them — infrastructure as code.",
+79:"Amazon Redshift is a fully managed, petabyte-scale data warehouse service in the cloud. Start with a few hundred gigabytes and scale to a petabyte or more.",
+80:"AWS's responsibility (security 'of' the cloud) includes securing edge locations, monitoring physical device security, and implementing Service Organization Control (SOC) standards.",
+81:"Cost Explorer (Cost and Usage reports) is a free tool to view your costs — here you can see running and forecast costs.",
+82:"By default, complete administrative control over all resources in an AWS account is with the Account Owner.",
+83:"The concept of decoupling ensures components can be managed separately. If all components are tightly coupled, when one goes down the whole application goes down. This requirement relates to Decoupling.",
+84:"Each AZ is a set of one or more data centers. By deploying to multiple Availability Zones, if one AZ goes down the others stay up — increasing fault tolerance.",
+85:"Per the Shared Responsibility model, patching the underlying hardware, physical security, and disk disposal (storage device decommissioning) are AWS's responsibility. AWS uses DoD 5220.22-M / NIST 800-88 techniques and degausses/destroys decommissioned magnetic media.",
+86:"Elasticity is the ability of an application to scale up and down based on demand. An example is the Auto Scaling service.",
+87:"Spot Instances are cost-effective if you can be flexible about when applications run and if they can be interrupted — well-suited for data analysis, batch jobs, and background processing.",
+88:"The AWS Management Console lets you access and manage AWS through a web-based UI, using a user name and password. (API/SDK/CLI use access keys instead.)",
+89:"AWS Organizations offers policy-based management for multiple AWS accounts. You can create groups of accounts, apply policies centrally, and use consolidated billing for an efficient costing model.",
+90:"AWS MFA is a simple best practice that adds an extra layer of protection on top of your user name and password.",
+91:"AWS Elastic Beanstalk is an easy-to-use service for deploying and scaling web applications developed with Java, .NET, PHP, Node.js, Python, Ruby, Go, and Docker on familiar servers (Apache, Nginx, Passenger, IIS).",
+92:"Businesses use AWS for faster disaster recovery. With data centers in Regions around the world, deploying the application across multiple Regions builds a robust, highly available architecture.",
+93:"AWS continually lowers the cost of cloud computing for customers. In 2014 AWS reduced compute cost by ~30%, storage by ~51%, and relational databases by ~28%.",
+94:"Amazon CloudFront distributes content with low latency and high transfer speeds, delivering it to end-users via a global network of edge locations — ideal for streaming video globally.",
+95:"Amazon DynamoDB is a fast and flexible, fully managed NoSQL database service for applications needing consistent, single-digit millisecond latency at any scale.",
+96:"Amazon Glacier is a secure, durable, low-cost cloud storage service for data archiving and long-term backup, designed for 99.999999999% durability.",
+97:"When utilization is guaranteed consistent for a long period, the best option is Reserved Instances, which allocate an instance for the duration you specify at reduced cost.",
+98:"AWS Direct Connect makes it easy to establish a dedicated network connection from your premises to AWS, which can reduce network costs, increase bandwidth, and provide a more consistent experience than internet-based connections.",
+99:"Trusted Advisor's categories are: Security, Cost Optimization, Performance, and Fault tolerance. 'High Availability' is NOT a Trusted Advisor category.",
+100:"Amazon S3 is the default storage service — it provides durable storage for all static content such as photos and videos.",
+101:"The principle of least privilege means giving a user account only those privileges essential to perform its intended function.",
+102:"Amazon EC2 provides secure, resizable compute capacity in the cloud — equivalent to hosting virtual servers on an on-premises location.",
+103:"A security group acts as a virtual firewall controlling inbound/outbound traffic; a network ACL is an optional security layer for your VPC. Both help reduce the DDoS threat to EC2 Instances.",
+104:"An Amazon Machine Image (AMI) provides the information required to launch an instance (a virtual server). You specify an AMI when launching — similar to using a VM Template.",
+105:"The AWS Console cannot upload data onto Glacier — it can only create a Glacier vault. (Data goes in via Glacier API, SDK, or S3 Lifecycle policies.)",
+106:"The Enterprise support plan provides 24x7 access via email, chat & phone, and response time under 15 minutes for business-critical system down. (Note: Business plan also offers phone/chat and <1hr for production-down and is often cheaper; the question bank's answer is D.)",
+107:"Amazon CloudFront uses a global network of edge locations and regional edge caches that cache content close to viewers. Edge locations distribute content, cache common responses, and are used in conjunction with CloudFront. (They do NOT distribute load.)",
+108:"S3 Lifecycle configuration manages objects in a bucket. Transition actions move objects to another storage class (e.g., STANDARD_IA after 30 days, or GLACIER after one year); expiration actions delete objects when they expire.",
+109:"To increase database availability and protect your latest updates against unplanned outages, run a Multi-AZ deployment. You can combine Multi-AZ with Read Replicas to gain both availability and read-scaling benefits.",
+110:"Since the requirement is for a short period (6 months), the most cost-effective option is On-Demand Instances.",
+111:"AWS Snowball is a petabyte-scale data transport solution using secure appliances to transfer large amounts of data into/out of AWS. It addresses high network costs, long transfer times, and security concerns — can cost as little as one-fifth of high-speed Internet.",
+112:"With AWS, benefits include the pay-as-you-go model and no upfront costs — so you don't worry about burning costs for non-running resources or paying upfront. (Security is still a shared responsibility, and AWS — not you — controls the physical infrastructure.)",
+113:"AWS Database Migration Service helps you migrate databases to AWS quickly and securely. The source database stays fully operational during migration, minimizing downtime; it migrates to/from most commercial and open-source databases (e.g., Oracle).",
+114:"You can reduce the load on your source DB Instance by routing read queries to a Read Replica. Read replicas let you scale out beyond a single DB instance for read-heavy workloads.",
+115:"Regions correspond to different geographic locations in AWS. (A Region contains multiple Availability Zones; an AZ is one or more data centers.)",
+116:"For maximum control over the database engine and underlying infrastructure (a self-managed database), host the database on an EC2 Instance.",
+117:"All listed items are cloud advantages: avoiding large upfront capital purchases, using capacity on demand, deploying globally in minutes, and increasing speed and agility.",
+118:"AWS uses a 'pay as you go' model — you pay only for the resources you consume, with no long-term contracts or upfront commitments required.",
+119:"The three cloud computing models are IaaS, PaaS, and SaaS. 'System administration as a service' is not a recognized cloud computing model.",
+120:"True. In cloud computing, AWS owns and maintains the underlying network-connected hardware, while customers provision and use only the resources they need.",
+121:"Paying to rack, stack, and power servers is an on-premises burden that the cloud eliminates — so it is NOT a benefit of cloud computing.",
+122:"Cloud computing removes lengthy procurement cycles and aims for low latency. 'Multiple procurement cycles' and 'High latency' are drawbacks, not benefits.",
+123:"Amazon EC2 (Elastic Compute Cloud) is the compute service. VPC is networking, S3 is storage, CloudFront is content delivery, and Redshift is a data warehouse.",
+124:"False. AWS — not the customer — owns and maintains the network-connected hardware. The customer simply provisions and uses what they need.",
+125:"Economies of scale come from aggregating hundreds of thousands of customers' usage in the cloud, which lowers AWS's costs and lets those savings be passed to customers.",
+126:"AWS services can be accessed three ways: the Management Console (web UI), the AWS CLI (command line), and the SDKs (programmatically from code).",
+127:"Reserved Instances have three payment options: All Upfront (AURI), Partial Upfront (PURI), and No Upfront (NURI). More upfront payment = bigger discount.",
+128:"AWS Cost Explorer lets you view and analyze your costs, with historical data for up to the last 13 months — ideal for reviewing billing from 3 months ago.",
+129:"False. Reserved Instances offer All Upfront, Partial Upfront, and No Upfront payment options — full upfront payment is not required to get a discount (though it gives the largest one).",
+130:"Per the question bank, the marked answer is D (a free tier applies to outbound data transfer up to a per-account limit). Note: option B (storage is typically charged per gigabyte) is also true and is often the expected answer; A and C are false (inbound transfer is generally free, and compute is billed per second/hour, not monthly).",
+131:"AWS Support offers four plans: Basic (free), Developer, Business, and Enterprise — with increasing levels of support and faster response times.",
+132:"The AWS Pricing Calculator lets you model your solution, explore service prices, and create an upfront cost estimate before you build.",
+133:"This is economies of scale — as AWS's scale grows, per-unit costs fall and AWS passes the savings to customers through lower prices.",
+134:"True. Services like VPC, IAM, Consolidated Billing, Elastic Beanstalk, Auto Scaling, OpsWorks, and CloudFormation are free; you only pay for the underlying resources you provision with them.",
+135:"AWS Organizations lets you group accounts and attach policies to those groups, and automate account creation/management via APIs. SCPs add to (not replace) IAM; OUs are not unlimited; and SCPs can restrict even the root user.",
+136:"False. The AWS Free Tier provides limited amounts of specific services (with usage caps), not unlimited services. Some offers last 12 months; others are always free or short-term trials.",
+137:"CloudFront caches content at AWS edge locations close to users, reducing latency for content delivery.",
+138:"Running workloads in a Region closer to your end users decreases latency, because data travels a shorter distance.",
+139:"True. AWS organizes its offerings into service categories including networking, storage, compute, and databases (among many others).",
+140:"An AWS Region is a geographic area that contains two or more Availability Zones, each made up of one or more data centers.",
+141:"'Fault tolerant' means built-in component redundancy; 'elastic and scalable' means resources dynamically adjust to capacity changes.",
+142:"True. Availability Zones in a Region are interconnected with high-bandwidth, low-latency private links to support synchronous replication.",
+143:"A single data center belongs to only one Availability Zone — it cannot serve more than one AZ. So statement C is false.",
+144:"A Region is a physical location containing multiple Availability Zones, and each Region sits in its own separate geographic area.",
+145:"AWS recommends spreading compute resources across multiple Availability Zones so that a failure in one AZ doesn't take down your application.",
+146:"False. Edge locations are far more numerous than Regions and are spread across many cities worldwide, often far from any Region, to serve users locally.",
+147:"AWS is responsible for 'security OF the cloud' — the underlying hardware, software, networking, and facilities. Customers handle 'security IN the cloud.'",
+148:"'Security in the cloud' is the customer's responsibility — e.g. configuring security groups and encrypting data at rest and in transit. Physical security and protecting the global infrastructure are AWS's job.",
+149:"Maintaining the physical hardware is AWS's responsibility. Configuring apps, securing application access/data, and managing custom AMIs are the customer's responsibilities.",
+150:"IAM users can be granted Programmatic Access (an access key for CLI/SDK/API) and/or AWS Management Console Access (username and password for the web UI).",
+151:"True. AWS Organizations lets you consolidate multiple accounts into an organization that you can manage centrally, with consolidated billing and policy controls.",
+152:"Best practices include managing access to AWS resources and defining fine-grained (least-privilege) access rights. You should NOT give default admin rights, leave unused credentials, or avoid groups.",
+153:"Changing the AWS Support plan is one of the few tasks that require the root user. Everyday tasks should be done with IAM users/roles, not root.",
+154:"AWS recommends deleting the root user's access keys (and enabling MFA). The root user can't be deleted or have its permissions revoked, so you lock it down by removing programmatic keys.",
+155:"Enabling multi-factor authentication (MFA) adds a second factor (a device code) on top of the password, strengthening console login security.",
+156:"False. Assessing, auditing, and evaluating resource configurations is AWS Config. AWS KMS is for creating and managing encryption keys.",
+157:"The smallest VPC subnet is a /28, which provides 16 IP addresses (5 are reserved by AWS). The largest is a /16.",
+158:"The largest VPC CIDR block is a /16 (65,536 addresses); the smallest is a /28.",
+159:"A NAT gateway lets resources in a private subnet initiate outbound internet connections (e.g. for updates) while remaining unreachable from the internet.",
+160:"Amazon VPC (Virtual Private Cloud) lets you create a logically isolated virtual network in AWS where you define IP ranges, subnets, route tables, and gateways.",
+161:"False. Private subnets have no direct internet access. They reach the internet only indirectly via a NAT gateway/instance in a public subnet.",
+162:"CloudFront uses AWS edge locations to cache and deliver content close to users for low latency.",
+163:"A Network ACL operates at the subnet layer as an optional, stateless firewall. Security groups act at the instance (ENI) layer instead.",
+164:"Creating a VPC automatically creates a main route table (and a default NACL and security group). It does NOT auto-create subnets or an internet gateway.",
+165:"A security group acts as a virtual, stateful firewall controlling inbound/outbound traffic to an EC2 instance. An AMI is a template and an internet gateway provides connectivity, not protection.",
+166:"AWS reserves 5 IP addresses in every subnet (network address, VPC router, DNS, future use, and broadcast). So 256 − 5 = 251 usable addresses.",
+167:"Because EC2 instances can be launched on demand and terminated when no longer needed, you pay only for what you use instead of permanently provisioning for peak load.",
+168:"Scheduled Reserved Instances suit workloads that run on a predictable recurring schedule (e.g. monthly batch reports), reserving capacity for those windows at a discount.",
+169:"An AMI includes a template for the root volume, launch permissions (which accounts can use it), and a block device mapping for volumes to attach — all of the above.",
+170:"Dedicated Instances run on hardware dedicated to a single customer, so they don't share a physical host with other AWS customers' instances.",
+171:"AWS Lambda is a serverless compute service — you run code without provisioning or managing servers, paying only for compute time consumed.",
+172:"AWS Elastic Beanstalk lets you upload your code and it automatically handles deployment, capacity provisioning, load balancing, and scaling.",
+173:"Use Reserved Instances for the steady baseline (4 instances always on) and On-Demand for the brief monthly spike (8 extra). This mixes the lowest steady-state cost with pay-per-use flexibility.",
+174:"False. Containers share the host OS kernel and package only the app and its dependencies — they do NOT contain a full operating system. Virtual machines do.",
+175:"Reserved Instances give the biggest savings for long-term, predictable workloads in exchange for a 1- or 3-year commitment.",
+176:"Launching an instance requires choosing an AMI (the image/OS) and an instance type (the hardware sizing). The instance ID is assigned automatically, and the admin password is generated, not specified.",
+177:"True. Amazon S3 is object storage ideal for flat files such as documents, images, videos, and backups.",
+178:"By default S3 redundantly stores objects across multiple Availability Zones within the same Region, giving 99.999999999% durability. Cross-Region requires explicit replication.",
+179:"S3 storage classes include S3 Standard, S3 Standard-Infrequent Access, and S3 Glacier — all valid lifecycle transition targets. Storage Gateway and DynamoDB are separate services.",
+180:"S3 bucket names must be globally unique across all AWS accounts worldwide, because they form part of a globally addressable URL.",
+181:"Amazon EFS is a shared, elastic file system that multiple EC2 instances can mount and access concurrently — ideal for shared file storage.",
+182:"EBS suits data that must be quickly accessible with long-term persistence, and that may require encryption. EBS is block (not object) storage and a volume must be in the same AZ as its instance.",
+183:"False. By default S3 buckets and objects are private — only the owner can access them. Public access must be explicitly granted.",
+184:"In Glacier, a vault is a container for storing archives. An archive is the object (file); a vault access policy controls who can access them.",
+185:"True. Each S3 bucket is created in and associated with a specific AWS Region; objects stay in that Region unless you replicate them elsewhere.",
+186:"EBS volumes can be transparently encrypted and are automatically replicated within their Availability Zone for durability. EBS persists when the instance is stopped, and there is no tape backup.",
+187:"DynamoDB's fast, consistent, single-digit-millisecond performance and seamless scaling make it ideal for storing session state for huge numbers of concurrent users.",
+188:"Scan reads every item in the table and can filter on any attribute (including non-key attributes). Query and GetItem require the primary key.",
+189:"Query lets you retrieve items using the partition key (with an optional sort key condition), can target secondary indexes, and does so efficiently — all of the above.",
+190:"Amazon Redshift is a data warehouse built for analytics with standard SQL and BI tools over large datasets.",
+191:"An attribute is a fundamental data element — the smallest unit of data, like a field. Items are collections of attributes; tables are collections of items.",
+192:"DynamoDB is a NoSQL database offering very fast performance, seamless scaling, and a flexible (schemaless) data model.",
+193:"RDS is a relational database suited to complex transactions and joins. Massive key-value read/write and simple get/put fit NoSQL (DynamoDB) better.",
+194:"Amazon Aurora is MySQL-compatible and delivers high availability, automated backups, and much higher performance — ideal for migrating a MySQL-backed app.",
+195:"True. RDS is a managed service that automatically patches the DB engine, takes backups, retains them for your chosen period, and supports point-in-time recovery.",
+196:"Choosing a database depends on many factors — data size, how long data is accessed, query frequency, and availability needs — all of the above.",
+197:"The Performance Efficiency pillar's areas are Selection, Review, Monitoring, and Tradeoffs. 'Traceability' is not one of them.",
+198:"A core cloud design principle is to assume everything will fail and design for failure — build loosely-coupled, resilient, automatically-recovering systems.",
+199:"The Well-Architected pillars are Operational Excellence, Security, Reliability, Performance Efficiency, Cost Optimization, and Sustainability. 'Persistence' is not a pillar.",
+200:"Performance Efficiency principles include democratizing advanced technologies (use managed services) and using serverless architectures. Traceability is Security; analyzing expenditure is Cost Optimization.",
+201:"Trusted Advisor checks five categories: Cost Optimization, Performance, Security, Fault Tolerance, and Service Limits.",
+202:"The Sustainability pillar focuses on minimizing the environmental impact of running cloud workloads (e.g. energy efficiency, resource utilization).",
+203:"AWS Trusted Advisor checks your environment against best practices, including security, helping with security compliance.",
+204:"Per the AWS Academy course, reliability is defined as a measure of your system's ability to provide functionality when desired by the user. (Note: in everyday usage 'availability' captures a similar idea, but the course's marked answer is Reliability.)",
+205:"Fault tolerance is the built-in ability of a system to keep operating even when some components fail (via redundancy).",
+206:"High availability describes a system that stays operational with minimal downtime and minimal human intervention, tolerating some degradation.",
+207:"EC2 Auto Scaling adds/removes instances based on demand, and Elastic Load Balancing distributes traffic across them — together they let an app scale up and down.",
+208:"Amazon SNS (Simple Notification Service) sends notifications (email, SMS, etc.) triggered by CloudWatch alarms.",
+209:"EC2 Auto Scaling responds to conditions by adding/terminating instances, launches them from a specified AMI (via the launch template/config), and enforces a minimum count. It supports more than just dynamic scaling and doesn't send push notifications itself.",
+210:"A listener checks for connection requests on a configured protocol and port, and forwards them to targets. It's required for a load balancer to accept incoming traffic.",
+211:"A launch configuration/template specifies the AMI, the instance type, and EBS volumes (plus key pair and security groups). The load balancer and VPC/subnets are set on the Auto Scaling group, not the launch configuration.",
+212:"Amazon CloudWatch collects and tracks metrics from AWS resources such as RDS and EC2, and can trigger alarms and actions.",
+213:"An Auto Scaling group is defined by its minimum size, desired capacity, and maximum size — controlling how many instances run.",
+214:"AWS CloudTrail records all API activity and access to resources across the account, providing an audit trail for governance and compliance.",
+215:"When a target is unhealthy, ELB stops sending it traffic and routes only to healthy targets. It resumes traffic to a target only after health checks pass again — not before.",
+216:"Elastic Load Balancing offers Application Load Balancer (Layer 7), Network Load Balancer (Layer 4), and Classic Load Balancer (legacy). (A Gateway Load Balancer also exists.)"
+};
+
+const CEXP={
+1:"S3 是物件儲存，可從任何地方存取任意量資料，耐久度設計達 99.999999999%。EBS 提供持久性區塊儲存磁碟區，供 EC2 使用，並在所屬可用區內自動複寫。兩者都能用來存檔案。",
+2:"CloudFront 加速靜態與動態網頁內容（.html、.css、.js、圖片）的傳遞，透過全球各地稱為「邊緣節點（edge location）」的資料中心送達使用者。",
+3:"EC2 的優勢之一是按秒計費——用多少付多少，未使用的分秒不計費。特別適合開發測試、資料處理、分析、批次與遊戲等不規則使用的工作負載。",
+4:"Trusted Advisor 是線上資源，協助你最佳化 AWS 環境以降低成本、提升效能、加強安全，並依 AWS 最佳實務即時提供佈建建議。",
+5:"CloudWatch 是 AWS 雲端資源與應用程式的監控服務，可收集追蹤指標、收集監控日誌、設定警報，並對資源變化自動反應。",
+6:"透過 CloudTrail 可監控所有 AWS 服務的 API 活動。它支援治理、合規、營運與風險稽核，並提供帳戶活動的事件歷程（主控台、SDK、CLI、其他服務），方便安全分析與資源變更追蹤。",
+7:"Route 53 可註冊新網域名稱。它是高可用、可擴展的雲端 DNS 服務，把 www.example.com 之類的名稱轉換成數字 IP，並完全支援 IPv6。",
+8:"讓服務可透過 API 存取，使開發者能以程式化方式輕鬆操作各種 AWS 資源。",
+9:"每個 AZ 是一組（一個以上）資料中心。把資源部署到多個可用區即「為失敗而設計」——若一個 AZ 故障，其他仍運作，應用更具容錯能力。",
+10:"IAM 是協助你安全控管 AWS 資源存取的服務，用來管理誰已驗證（登入）以及誰被授權（有權限）使用資源。",
+11:"Redshift 是全託管、PB 級的雲端資料倉儲服務，可從數百 GB 起步，擴展到 PB 以上，協助取得新的商業洞察。",
+12:"管理使用者的各種權限、角色與授權，是 AWS 客戶的責任（雲「中」的安全）。",
+13:"Cost Explorer 是免費工具，可檢視成本，最多可看近 13 個月資料、預測未來三個月支出，並提供預留執行個體（Reserved Instances）的購買建議。",
+14:"AWS 帳戶內資料的完整控制權在於帳戶擁有者（Account Owner）。",
+15:"解耦的概念是讓應用程式的各元件能各自獨立管理與維護。若所有元件緊密耦合，當一個元件故障時整個應用都會掛掉。",
+16:"每個 AZ 是一組資料中心。部署到多個可用區後，若一個 AZ 故障其他仍運作——因此提升了應用的可用性。",
+17:"依共同責任模型，使用者層面的安全——密碼政策與使用者權限——須由 AWS 客戶管理。",
+18:"彈性（Elasticity）是指應用程式能依需求自動擴大與縮小規模，例如 Auto Scaling 服務。",
+19:"若你能彈性安排應用何時執行、且應用可被中斷，Spot 執行個體是划算的選擇，很適合資料分析、批次工作、背景處理與非必要任務。",
+20:"AWS Management Console 讓你透過簡單直覺的網頁介面存取與管理 AWS 服務。",
+21:"Cost Explorer 是免費工具，可檢視成本，看出隨時間的花費模式、找出需深入了解的項目、檢視趨勢，並可指定時間範圍、按日或按月檢視。",
+22:"MFA（多因素驗證）是簡單的最佳實務，在帳號密碼之上再加一層保護。",
+23:"你可以在 AWS Management Console 中使用 IAM 為帳戶內的 IAM 使用者啟用虛擬 MFA 裝置。",
+24:"企業用 AWS 加速關鍵 IT 系統的災難復原，無需第二個實體據點的成本。DR 架構從 pilot light 到 hot standby 都有。災難復原的基礎設施應佈建在另一個 Region。",
+25:"由於 EC2 執行個體在運行時才計費，計算 TCO 時須把需要遷移到 AWS 的伺服器數量納入考量。",
+26:"CloudFront 讓企業與開發者以低延遲、高傳輸速度且划算的方式分送內容；它是自助、按用付費的服務，透過全球邊緣節點網路傳遞。",
+27:"DynamoDB 是快速且彈性的 NoSQL 資料庫服務，適合需在任意規模下維持個位數毫秒延遲的應用，全託管並支援文件與鍵值兩種模型。",
+28:"Glacier 是安全、耐久且極低成本的雲端儲存服務，用於資料封存與長期備份，耐久度設計達 99.999999999%，並具備完整安全與合規能力。",
+29:"當執行個體會全年持續使用時，最佳選擇是購買 Reserved（預留）執行個體——以較低成本取得你指定期間內的執行個體配置。",
+30:"S3 Transfer Acceleration 讓你在用戶端與 S3 儲存貯體間，跨遠距離快速、安全傳檔。它利用 CloudFront 全球分布的邊緣節點，資料經最佳化網路路徑送往 S3。",
+31:"對 EC2 執行個體做滲透測試前，須先取得 AWS 授權。（註：現實中 AWS 已對常見服務取消事先核准要求，但本題庫答案為 D。）",
+32:"Trusted Advisor 檢視你的環境並在四大類提供建議：效能（Performance）、成本最佳化（Cost optimization）、安全（Security）、容錯（Fault tolerance）。",
+33:"S3 是公司應優先考慮的預設儲存服務——為所有靜態內容提供耐久儲存，同時讓 Web 層的 CPU 使用較低。",
+34:"最小權限原則是指只給使用者帳戶執行其預定功能所需的最少權限。例如只負責建立備份的帳戶，只需執行備份相關程式的權限。",
+35:"EC2 是提供安全、可調整大小運算能力的雲端服務，讓大規模雲端運算對開發者更容易——也就是用來託管虛擬伺服器。",
+36:"安全群組（Security Group）是執行個體層級的虛擬防火牆，控制進出流量；網路 ACL 是 VPC 的可選安全層，作為一個以上子網的防火牆。兩者都能保護 EC2。",
+37:"AMI（Amazon Machine Image）提供啟動執行個體（雲端虛擬伺服器）所需的資訊，可依需求從同一個 AMI 啟動多個執行個體——這就是「黃金映像」。",
+38:"部分 AWS 服務本身已符合 PCI——設計應用時應查核這份清單。合規是共同責任：開發應用時也必須採取正確步驟。",
+39:"AWS 主控台「不能」上傳資料到 Glacier（只能建立 Glacier vault）。資料可透過 Glacier API、Glacier SDK 或 S3 生命週期政策上傳。",
+40:"只有 Enterprise 支援方案才提供 Support Concierge（禮賓服務）。",
+41:"只有 Enterprise 支援方案能滿足關鍵業務系統「15 分鐘內回應」的需求。",
+42:"邊緣節點不做負載分散——那是負載平衡器的工作。邊緣節點是搭配 CloudFront 使用，用來快取物件與傳遞內容。",
+43:"S3 是理想的儲存選項，還能為每個物件指派一個 URL，用來下載該物件。",
+44:"若資料庫至少使用一年，採用 Reserved 較佳，可節省成本；而「部分預付」選項能取得更好的折扣。",
+45:"由於需求只有 3 個月，最划算的選擇是 On-Demand（隨需）執行個體。",
+46:"為 EC2 定義安全規則時，客戶負責給安全群組命名、加描述並撰寫規則。",
+47:"實體基礎設施是 AWS 的責任，因此不算上雲的優點；安全是共同責任，也不能不管。真正的優點是「按用付費」與「無前期成本」。",
+48:"透過 CloudTrail 可監控所有 API 活動。它支援治理、合規、營運與風險稽核，並提供帳戶活動的事件歷程——適合外部稽核查核所有存取紀錄。",
+49:"可用 Read Replica（唯讀複本）功能，把資料複寫到另一個 region（跨區唯讀複本）。",
+50:"Region 對應 AWS 的不同地理位置。要在另一個地理位置建立快照，就建在另一個 Region。",
+51:"自管資料庫代表你想完全掌控資料庫引擎與底層基礎設施——這種情況需把資料庫裝在 EC2 執行個體上。",
+52:"Aurora 是全託管、相容 MySQL 與 PostgreSQL 的關聯式資料庫引擎，吞吐量可達 MySQL 的 5 倍、PostgreSQL 的 3 倍，且儲存空間會自動成長。",
+53:"彈性是依需求擴縮的能力——依需求把流量導向執行個體，並導向負載最少的執行個體（例如透過 Auto Scaling）。",
+54:"負載平衡器把進來的應用流量分散到多個可用區的多個 EC2 執行個體，提升容錯；ELB 會偵測不健康的執行個體，只把流量導向健康的執行個體。",
+55:"AWS Auto Scaling 監控你的應用並自動調整容量，以最低成本維持穩定、可預期的效能——依需求增減資源。",
+56:"用 TCO 計算機比較「在地端或代管環境執行應用」與「在 AWS 執行」的成本；你描述地端配置，即可產生與 AWS 的詳細成本比較。",
+57:"建立 EBS 磁碟區的快照可確保你有 EBS 的備份——這是客戶的責任。",
+58:"AWS SDK 可整合各種程式語言，透過 SDK 即可呼叫所需的 AWS 服務。",
+59:"IAM Role 是帶權限政策的 AWS 身分，但與使用者不同，它沒有長期憑證。被擔任（assume）時會動態產生臨時安全憑證——這是 EC2 呼叫 AWS 服務的安全方式。",
+60:"AWS Organizations 的合併帳單（Consolidated billing）可整合多個帳戶的付款，看到合併的費用檢視，也能取得各成員帳戶的成本報告，且不額外收費。",
+61:"緩解 DDoS 的方法之一是縮小受攻擊面——例如把資源放在 CDN（CloudFront）或負載平衡器後方，並使用 AWS Shield；防火牆／ACL 則控制哪些流量能到達應用。",
+62:"WAF 是 Web 應用防火牆，可監控轉送到 CloudFront 或 Application Load Balancer 的 HTTP/HTTPS 請求，並控制對內容的存取。",
+63:"MFA 在帳號密碼之上加一層保護。啟用後登入時，使用者除了輸入密碼（你知道的東西），還要輸入 MFA 裝置的驗證碼（你擁有的東西）。",
+64:"DR 方法的光譜從 Backup & Restore → Pilot light → Warm standby。越往光譜末端停機時間越短；選項中以 Warm standby 停機最短。（完整光譜中最低停機是 Multi-site／Hot standby。）",
+65:"S3 是物件儲存，可從任何地方存取任意量資料，耐久度設計達 99.999999999%。",
+66:"EBS 磁碟區是耐久的區塊層級儲存裝置，可掛載到單一 EC2 執行個體，適合作為需頻繁更新資料的主要儲存（如系統磁碟或資料庫）。",
+67:"VPC 讓你把 AWS 資源啟動在自訂的虛擬網路中，類似你在自家資料中心運作的傳統網路，並享有 AWS 可擴展基礎設施的好處。",
+68:"SQS 提供可靠、高度可擴展的代管佇列，存放在應用程式或微服務間傳遞的訊息。它在分散式元件間搬移資料，協助你把這些元件解耦。",
+69:"CloudFront 加速靜態與動態內容的傳遞，透過全球各地稱為邊緣節點的資料中心送達。",
+70:"EC2 的優勢之一是按秒計費——用多少付多少，未使用的分秒會從帳單扣除。",
+71:"Trusted Advisor 依最佳實務即時提供佈建建議；AWS Inspector 可針對常見威脅檢測 EC2 執行個體。兩者都有助於安全合規。",
+72:"CloudWatch 是 AWS 雲端資源的監控服務，可收集追蹤指標（來自 RDS、EC2 等）、監控日誌、設定警報並對變化反應。",
+73:"透過 CloudTrail 可監控所有 API 活動，支援治理、合規、營運與風險稽核，並提供帳戶活動的事件歷程——即帳戶內所用服務的完整稽核軌跡。",
+74:"Route 53 是 AWS 的 DNS 服務。發生災難時，可透過 Route 53 輕鬆切換到次要站點，它透過把名稱轉換為 IP 來引導使用者到應用。",
+75:"CLI 讓開發者能以程式化方式輕鬆操作各種 AWS 資源。",
+76:"每個 AZ 是一組資料中心；跨多個 AZ 部署即為失敗而設計。災難復原時可在其他 Region 執行資源，而 Elastic Load Balancer 可把負載分散到區域內的多個後端執行個體。",
+77:"IAM 是協助你安全控管 AWS 資源存取的服務，控管誰已驗證與被授權，包含管理使用者與群組。",
+78:"CloudFormation 協助你建模並建立 AWS 資源。你撰寫描述所有所需資源的範本，CloudFormation 便為你佈建與設定——即基礎設施即程式碼。",
+79:"Redshift 是全託管、PB 級的雲端資料倉儲服務，可從數百 GB 起步，擴展到 PB 以上。",
+80:"AWS 的責任（雲「本身」的安全）包含維護邊緣節點安全、監控實體設備安全，以及實施 SOC（服務組織控制）標準。",
+81:"Cost Explorer（成本與用量報告）是免費工具，可在此檢視目前及預測的費用。",
+82:"預設情況下，對 AWS 帳戶內所有資源的完整管理控制權在於帳戶擁有者。",
+83:"解耦的概念是讓元件能各自管理。若所有元件緊密耦合，一個故障整個應用都會掛。本題需求對應的就是 Decoupling（解耦）。",
+84:"每個 AZ 是一組資料中心。部署到多個可用區後，若一個 AZ 故障其他仍運作——提升容錯能力。",
+85:"依共同責任模型，底層硬體的修補、實體安全與硬碟銷毀（儲存裝置除役）是 AWS 的責任。AWS 採用 DoD 5220.22-M／NIST 800-88 技術，並對除役的磁性媒體消磁與實體銷毀。",
+86:"彈性是指應用程式能依需求自動擴大與縮小，例如 Auto Scaling 服務。",
+87:"若你能彈性安排執行時間且應用可被中斷，Spot 執行個體最划算——很適合資料分析、批次工作與背景處理。",
+88:"AWS Management Console 讓你透過網頁介面、使用帳號密碼存取與管理 AWS。（API／SDK／CLI 改用存取金鑰。）",
+89:"AWS Organizations 提供多帳戶的政策式管理，可建立帳戶群組、集中套用政策，並用合併帳單達成有效率的計費模式。",
+90:"MFA 是簡單的最佳實務，在帳號密碼之上再加一層保護。",
+91:"Elastic Beanstalk 是易用的服務，用於部署與擴展以 Java、.NET、PHP、Node.js、Python、Ruby、Go 與 Docker 開發的 Web 應用，運行於 Apache、Nginx、Passenger、IIS 等常見伺服器。",
+92:"企業用 AWS 加速災難復原。AWS 在全球各 Region 都有資料中心，把應用跨多個 Region 部署可打造穩固、高可用的架構。",
+93:"AWS 持續為客戶調降雲端運算成本。2014 年 AWS 平均調降運算成本約 30%、儲存約 51%、關聯式資料庫約 28%。",
+94:"CloudFront 以低延遲、高傳輸速度分送內容，透過全球邊緣節點網路送達使用者——很適合全球串流影片。",
+95:"DynamoDB 是快速、彈性且全託管的 NoSQL 資料庫服務，適合需在任意規模維持個位數毫秒延遲的應用。",
+96:"Glacier 是安全、耐久、低成本的雲端儲存服務，用於資料封存與長期備份，耐久度設計達 99.999999999%。",
+97:"當使用率保證長期穩定時，最佳選擇是 Reserved 執行個體——以較低成本配置你指定期間內的執行個體。",
+98:"Direct Connect 讓你輕鬆建立從地端到 AWS 的專屬網路連線，可降低網路成本、提高頻寬，並提供比走網際網路更一致的網路體驗。",
+99:"Trusted Advisor 的類別為：安全（Security）、成本最佳化（Cost Optimization）、效能（Performance）、容錯（Fault tolerance）。「高可用（High Availability）」不是其類別。",
+100:"S3 是預設的儲存服務——為照片、影片等所有靜態內容提供耐久儲存。",
+101:"最小權限原則是指只給使用者帳戶執行其預定功能所需的最少權限。",
+102:"EC2 提供安全、可調整大小的雲端運算能力——相當於在地端託管虛擬伺服器。",
+103:"安全群組是控制進出流量的虛擬防火牆；網路 ACL 是 VPC 的可選安全層。兩者都能降低 EC2 受 DDoS 的威脅。",
+104:"AMI 提供啟動執行個體（虛擬伺服器）所需的資訊，啟動時指定一個 AMI——類似使用 VM 範本。",
+105:"AWS 主控台不能上傳資料到 Glacier——只能建立 Glacier vault。（資料須透過 Glacier API、SDK 或 S3 生命週期政策。）",
+106:"Enterprise 支援方案提供 24x7 信箱／聊天／電話存取，且關鍵業務系統停機回應時間小於 15 分鐘。（註：Business 方案也提供電話／聊天且生產系統停機 <1 小時、通常更便宜；本題庫答案為 D。）",
+107:"CloudFront 使用全球邊緣節點與區域邊緣快取，把內容快取在靠近觀眾處。邊緣節點負責分送內容、快取常見回應，並搭配 CloudFront 使用。（它「不」做負載分散。）",
+108:"S3 生命週期設定可管理貯體中物件：轉換動作把物件移到其他儲存類別（如 30 天後轉 STANDARD_IA、一年後轉 GLACIER）；到期動作則在物件到期時刪除它們。",
+109:"要提升資料庫可用性並保護最新更新免於非預期中斷，採用 Multi-AZ 部署。可把 Multi-AZ 與 Read Replica 併用，同時獲得可用性與讀取擴展的好處。",
+110:"由於需求是短期（6 個月），最划算的選擇是 On-Demand 執行個體。",
+111:"Snowball 是 PB 級的資料傳輸方案，用安全裝置把大量資料搬進／出 AWS，解決高網路成本、長傳輸時間與安全疑慮——成本可低至高速網際網路的五分之一。",
+112:"用 AWS 的好處包含按用付費與無前期成本——因此不必擔心閒置資源的費用或預先付款。（安全仍是共同責任，且實體基礎設施由 AWS 而非你掌控。）",
+113:"AWS Database Migration Service（DMS）協助你快速、安全地把資料庫遷移到 AWS。遷移期間來源資料庫維持運作，將停機降到最低；可在多數商用與開源資料庫（如 Oracle）間遷移。",
+114:"把讀取查詢導向 Read Replica（唯讀複本），可降低來源 DB 執行個體的負載。唯讀複本讓你在讀取密集工作上擴展到超越單一 DB 執行個體的容量。",
+115:"Region 對應 AWS 的不同地理位置。（一個 Region 含多個可用區；一個 AZ 是一個以上的資料中心。）",
+116:"若要對資料庫引擎與底層基礎設施有最大掌控（自管資料庫），就把資料庫裝在 EC2 執行個體上。",
+117:"列出的全部都是雲端優勢：免大筆前期資本支出、依需求取用容量、數分鐘內全球部署、提升速度與敏捷度。故選『以上皆是』。",
+118:"AWS 採『Pay as you go（按用付費）』模式——只為實際使用的資源付費，無需長期合約或前期承諾。",
+119:"三大雲端運算模型為 IaaS、PaaS、SaaS。『系統管理即服務』並非既有的雲端模型。",
+120:"正確。雲端運算中，底層連網硬體由 AWS 擁有與維護，客戶只需佈建並使用所需資源。",
+121:"花錢去上架、堆疊、為伺服器供電是地端的負擔，雲端正是要免去這些——因此它不是雲端的好處。",
+122:"雲端運算消除冗長的採購週期並追求低延遲。『多重採購週期』與『高延遲』是缺點而非好處。",
+123:"Amazon EC2 是運算服務。VPC 屬網路、S3 屬儲存、CloudFront 屬內容傳遞、Redshift 屬資料倉儲。",
+124:"錯誤。連網硬體由 AWS（而非客戶）擁有與維護，客戶只是佈建並使用所需資源。",
+125:"規模經濟源自把數十萬客戶的用量匯聚到雲端，降低 AWS 的成本，再把節省回饋給客戶。",
+126:"存取 AWS 服務的三種方式：Management Console（網頁介面）、AWS CLI（指令列）、SDK（從程式碼以程式化方式）。",
+127:"預留執行個體有三種付款方式：全額預付（AURI）、部分預付（PURI）、無預付（NURI）。預付越多折扣越大。",
+128:"AWS Cost Explorer 可檢視與分析成本，提供最多近 13 個月的歷史資料，適合查 3 個月前的帳單。",
+129:"錯誤。RI 提供全額預付、部分預付、無預付三種選項——不必全額預付也能享折扣（只是全額預付折扣最大）。",
+130:"依題庫答案為 D（對外傳輸有每帳戶的免費額度）。註：選項 B（儲存通常按 GB 計費）其實也成立、常被視為標準答案；A、C 為錯（入站傳輸一般免費，運算按秒/時計費而非月費）。",
+131:"AWS 支援有四種方案：Basic（免費）、Developer、Business、Enterprise，支援等級與回應速度依序提升。",
+132:"AWS Pricing Calculator 讓你先建模解決方案、查服務價格，在動工前產生成本預估。",
+133:"這就是規模經濟——AWS 規模越大、單位成本越低，再以降價把節省回饋給客戶。",
+134:"正確。VPC、IAM、合併帳單、Elastic Beanstalk、Auto Scaling、OpsWorks、CloudFormation 本身免費，只有透過它們佈建的底層資源才收費。",
+135:"Organizations 可把帳戶分組並對群組套用政策，並透過 API 自動化建立/管理帳戶。SCP 是疊加在 IAM 之上（非取代）；OU 並非無限；SCP 也能限制 root 使用者。",
+136:"錯誤。AWS 免費方案提供『特定服務的有限用量』（有上限），並非無限使用。部分為 12 個月、部分永久免費或短期試用。",
+137:"CloudFront 把內容快取在靠近使用者的邊緣節點（edge location），降低內容傳遞的延遲。",
+138:"在離使用者較近的 Region 執行可降低延遲，因為資料傳輸距離較短。",
+139:"正確。AWS 把產品分成多種服務類別，包含網路、儲存、運算、資料庫等。",
+140:"AWS Region 是含兩個以上可用區的地理區域，每個 AZ 由一個以上的資料中心組成。",
+141:"『容錯（fault tolerant）』指內建元件冗餘；『彈性可擴展（elastic and scalable）』指資源依容量變化動態調整。",
+142:"正確。Region 內的可用區之間以高頻寬、低延遲的私有連結相連，可支援同步複寫。",
+143:"一個資料中心只屬於一個可用區，不會同時供多個 AZ 使用，因此 C 為錯誤敘述。",
+144:"Region 是含多個可用區的實體位置，且每個 Region 各自位於獨立的地理區域。",
+145:"AWS 建議把運算資源分散到多個可用區，這樣單一 AZ 故障時應用仍能運作。",
+146:"錯誤。邊緣節點數量遠多於 Region，遍布全球許多城市（常離 Region 很遠），以就近服務使用者。",
+147:"AWS 負責『雲本身的安全（security OF the cloud）』——底層硬體、軟體、網路與設施；客戶負責『雲中的安全（security IN the cloud）』。",
+148:"『雲中的安全』是客戶責任——例如設定安全群組、加密靜態與傳輸中的資料。實體安全與保護全球基礎設施則是 AWS 的工作。",
+149:"維護實體硬體是 AWS 的責任。設定第三方應用、保護應用存取與資料、管理自訂 AMI 則屬客戶責任。",
+150:"IAM 使用者可被授予『程式化存取』（access key，用於 CLI/SDK/API）與/或『管理主控台存取』（帳號密碼登入網頁介面）。",
+151:"正確。AWS Organizations 可把多個帳戶整合成一個組織集中管理，並提供合併帳單與政策控管。",
+152:"最佳實務包含『管理對資源的存取』與『定義細緻（最小權限）的存取權』。不應預設給管理員權限、保留未使用憑證，或刻意不用群組。",
+153:"變更 AWS 支援方案是少數需要 root 使用者的任務之一。日常作業應改用 IAM 使用者/角色，而非 root。",
+154:"AWS 建議刪除 root 的存取金鑰（並啟用 MFA）。root 無法被刪除或撤銷權限，因此透過移除程式化金鑰來加以鎖定。",
+155:"啟用多因素驗證（MFA）會在密碼之外再加一個因素（裝置驗證碼），強化主控台登入安全。",
+156:"錯誤。評估、稽核、評鑑資源組態的是 AWS Config；AWS KMS 是用來建立與管理加密金鑰。",
+157:"VPC 最小的子網是 /28，提供 16 個 IP（其中 5 個被 AWS 保留）。最大則是 /16。",
+158:"VPC 最大的 CIDR 區塊是 /16（65,536 個位址）；最小是 /28。",
+159:"NAT 閘道讓私有子網的資源可『主動』對外連線（如更新），同時不被外網直接存取。",
+160:"Amazon VPC 讓你在 AWS 中建立邏輯隔離的虛擬網路，自行定義 IP 範圍、子網、路由表與閘道。",
+161:"錯誤。私有子網沒有直接的外網存取，只能透過公有子網中的 NAT 閘道/執行個體間接連外。",
+162:"CloudFront 利用 AWS 邊緣節點（edge location）就近快取與傳遞內容，達成低延遲。",
+163:"Network ACL 作用在子網層，是選用、無狀態的防火牆；安全群組則作用在執行個體（ENI）層。",
+164:"建立 VPC 會自動產生一個主路由表（以及預設 NACL 與安全群組），但『不會』自動建立子網或網際網路閘道。",
+165:"安全群組是有狀態的虛擬防火牆，控制 EC2 的進出流量。AMI 是映像範本、IGW 提供連線，皆非保護機制。",
+166:"AWS 在每個子網保留 5 個 IP（網路位址、VPC 路由器、DNS、保留、廣播）。故 256 − 5 = 251 個可用。",
+167:"因為 EC2 可隨需啟動、用完即終止，你只為實際使用付費，不必為尖峰負載長期常備機器。",
+168:"Scheduled Reserved Instances 適合可預期、週期性執行的工作（如每月批次報表），在固定時段預留容量並享折扣。",
+169:"AMI 包含根磁碟範本、啟動權限（哪些帳戶可用）、以及啟動時掛載磁碟的區塊裝置對應——以上皆是。",
+170:"Dedicated Instances 執行在單一客戶專用的硬體上，因此不會與其他 AWS 客戶的執行個體共用實體主機。",
+171:"AWS Lambda 是無伺服器運算服務——不需佈建或管理伺服器即可執行程式碼，只為實際運算時間付費。",
+172:"AWS Elastic Beanstalk 讓你上傳程式碼，它自動處理部署、容量佈建、負載平衡與擴展。",
+173:"穩定基線（4 台長期運行）用 Reserved，月底短暫尖峰（多 8 台）用 On-Demand。如此兼顧基線最低成本與按需彈性。",
+174:"錯誤。容器共用主機作業系統核心，只打包應用與其相依套件，並『不』包含整個作業系統；那是虛擬機（VM）的特性。",
+175:"Reserved Instances 以 1 或 3 年的承諾換取最大折扣，最適合長期、可預期的工作負載。",
+176:"啟動執行個體必須選 AMI（映像/作業系統）與執行個體類型（硬體規格）。執行個體 ID 是自動指派、管理員密碼是系統產生，皆非手動指定。",
+177:"正確。Amazon S3 是物件儲存，很適合存放文件、影像、影片、備份等檔案。",
+178:"S3 預設把物件冗餘儲存在同一 Region 的多個可用區，提供 99.999999999% 耐久度。跨 Region 需另行設定複寫。",
+179:"S3 的儲存類別包含 S3 Standard、S3 Infrequent Access、S3 Glacier，皆可作為生命週期轉換目標。Storage Gateway 與 DynamoDB 是另外的服務。",
+180:"S3 貯體名稱必須在全球所有 AWS 帳戶間唯一，因為它是全球可定址 URL 的一部分。",
+181:"Amazon EFS 是共享、彈性的檔案系統，可讓多個 EC2 同時掛載並存取——適合共享檔案儲存。",
+182:"EBS 適合需快速存取且長期持久、並可能需要加密的資料。EBS 屬區塊（非物件）儲存，且磁碟區必須與其執行個體在同一 AZ。",
+183:"錯誤。S3 貯體與物件預設為私有，只有擁有者能存取；公開存取必須明確授予。",
+184:"在 Glacier 中，vault（保管庫）是存放封存（archive）的容器。archive 是物件（檔案）；vault 存取政策則控制誰能存取。",
+185:"正確。每個 S3 貯體建立時都關聯到特定 AWS Region，物件會留在該 Region，除非你另行複寫。",
+186:"EBS 磁碟區可透明加密，並在所屬可用區內自動複寫以提高耐久度。執行個體停止時資料仍保留，且沒有磁帶備份。",
+187:"DynamoDB 具備快速、一致的個位數毫秒效能與無縫擴展，最適合為大量並發使用者儲存 session 狀態。",
+188:"Scan 會讀取整張表並可依任何屬性（含非主鍵）過濾。Query 與 GetItem 都需要主鍵。",
+189:"Query 可用分割鍵（並可加排序鍵條件）取得項目、可查次要索引、且查詢高效——以上皆是。",
+190:"Amazon Redshift 是資料倉儲，專為用標準 SQL 與 BI 工具對大型資料集做分析而設計。",
+191:"attribute 是最基本的資料元素（如欄位）。item 是屬性的集合；table 是 item 的集合。",
+192:"DynamoDB 是 NoSQL 資料庫，提供極快效能、無縫擴展與彈性（無固定綱要）的資料模型。",
+193:"RDS 是關聯式資料庫，適合複雜交易與關聯查詢。大量鍵值讀寫、簡單 get/put 更適合 NoSQL（DynamoDB）。",
+194:"Amazon Aurora 相容 MySQL，並提供高可用、自動備份與更高效能，最適合搬遷使用 MySQL 的應用。",
+195:"正確。RDS 是託管服務，會自動修補資料庫引擎、執行備份、依你設定的期間保留，並支援時間點還原。",
+196:"選擇資料庫需考量多項因素：資料量、資料存取期間、查詢頻率、高可用需求——以上皆是。",
+197:"效能效率支柱的面向為 Selection（選型）、Review（檢視）、Monitoring（監控）、Tradeoffs（取捨）。『Traceability（可追溯性）』不在其中。",
+198:"雲端設計核心原則是『假設一切都會故障』並為失敗而設計——打造鬆耦合、有韌性、能自動復原的系統。",
+199:"Well-Architected 的支柱為：卓越營運、安全、可靠性、效能效率、成本最佳化、永續。『Persistence（持久性）』不是支柱。",
+200:"效能效率原則包含『普及化先進技術』（多用託管服務）與『採用無伺服器架構』。可追溯性屬安全；分析支出屬成本最佳化。",
+201:"Trusted Advisor 檢查五大類：成本最佳化、效能、安全、容錯、服務限額（Service Limits）。",
+202:"永續支柱聚焦於降低運行雲端工作負載的環境衝擊（如能源效率、資源使用率）。",
+203:"AWS Trusted Advisor 依最佳實務檢查你的環境（含安全），協助安全合規。",
+204:"依 AWS Academy 課程定義，Reliability（可靠性）是衡量系統『在使用者需要時能否提供功能』的能力。（註：日常用語中『可用性』概念相近，但課程標準答案為 Reliability。）",
+205:"容錯（Fault Tolerance）是系統透過冗餘設計，在部分元件故障時仍能持續運作的內建能力。",
+206:"高可用（Highly available）形容系統停機極短、幾乎不需人工介入，並能容忍部分降級仍持續運作。",
+207:"EC2 Auto Scaling 依需求增減執行個體，Elastic Load Balancing 把流量分散到這些執行個體；兩者搭配讓應用能依需求擴縮。",
+208:"Amazon SNS（簡單通知服務）可在 CloudWatch 警報觸發時發送通知（電子郵件、簡訊等）。",
+209:"EC2 Auto Scaling 會依條件增減執行個體、以指定的 AMI（透過啟動範本/組態）啟動，並維持最少數量。它不只支援動態擴展，本身也不負責推播通知。",
+210:"監聽器（listener）依設定的協定與連接埠接收連線請求並轉送到目標，是負載平衡器接收進入流量的必要設定。",
+211:"啟動組態/範本指定 AMI、執行個體類型、EBS 磁碟區（以及金鑰對與安全群組）。負載平衡器與 VPC/子網是設定在 Auto Scaling 群組上，而非啟動組態。",
+212:"Amazon CloudWatch 收集並追蹤 RDS、EC2 等資源的指標，並可觸發警報與動作。",
+213:"Auto Scaling 群組由最小數量（minimum）、期望容量（desired）、最大數量（maximum）定義，控制運行的執行個體數。",
+214:"AWS CloudTrail 記錄帳戶內所有 API 活動與資源存取，提供治理與合規所需的稽核軌跡。",
+215:"目標不健康時，ELB 會停止對它導流，只把流量導向健康的目標；要等健康檢查再次通過後才恢復導流，而非提前恢復。",
+216:"Elastic Load Balancing 提供 Application Load Balancer（第7層）、Network Load Balancer（第4層）、Classic Load Balancer（舊型）。（另有 Gateway Load Balancer。）"
+};
+
+let order=[...Array(DATA.length).keys()];
+let idx=0;
+let showZh=true;
+const marks={};
+
+const $=id=>document.getElementById(id);
+const inner=$('inner');
+
+function topics(){
+  const set=[...new Set(DATA.map(d=>d.c))];
+  const sel=$('topic');
+  sel.innerHTML='<option value="ALL">全部（'+DATA.length+'）</option>'+
+    set.map(t=>`<option value="${t}">${t}（${DATA.filter(d=>d.c===t).length}）</option>`).join('');
+}
+function applyFilter(){
+  const t=$('topic').value;
+  order=[...Array(DATA.length).keys()].filter(i=>t==='ALL'||DATA[i].c===t);
+  idx=0; render();
+}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function render(){
+  if(order.length===0)return;
+  const d=DATA[order[idx]];
+  inner.classList.remove('flip');
+  const correctLetters=d.ans.split(',').map(s=>s.trim()[0]);
+  const plainOpts=d.opts.map(o=>`<li>${esc(o)}</li>`).join('');
+  const markedOpts=d.opts.map(o=>{
+    const hit=correctLetters.includes(o.trim()[0]);
+    return `<li class="${hit?'correct':''}">${esc(o)}</li>`;
+  }).join('');
+  $('front').innerHTML=`
+    <div class="meta"><span class="qno">Q${d.n} / ${DATA.length} ${d.multi?`<span class="multi">${d.multi}</span>`:''}</span><span class="tag">${d.c}</span></div>
+    <div class="q-en">${esc(d.en)}</div>
+    ${showZh?`<div class="q-zh">${esc(d.zh)}</div>`:''}
+    <ul class="opts">${plainOpts}</ul>
+    <div class="hint">先自己作答 → 點卡片或按「翻面看答案」</div>`;
+  $('back').innerHTML=`
+    <div class="meta"><span class="qno">Q${d.n} 解答</span><span class="tag">${d.c}</span></div>
+    <div class="ans-label">正確答案</div>
+    <div class="ans-big">${esc(d.ans)}</div>
+    <ul class="opts" style="margin-bottom:12px">${markedOpts}</ul>
+    <div class="explain"><b>Explanation:</b> ${esc(EXP[d.n]||'')}</div>
+    <div class="cexplain"><b>完整解析：</b>${esc(CEXP[d.n]||'')}</div>
+    <div class="keypoint"><span class="zh">💡 一句速記：${esc(d.key)}</span></div>
+    <div class="hint">← → 換題　空白鍵翻面</div>`;
+  document.querySelector('.card').className='card '+(marks[d.n]?('marked-'+marks[d.n]):'');
+  $('pbar').style.width=((idx+1)/order.length*100)+'%';
+  updateCounts();
+}
+function updateCounts(){
+  $('cKnow').textContent=Object.values(marks).filter(v=>v==='known').length;
+  $('cUnknown').textContent=Object.values(marks).filter(v=>v==='unknown').length;
+}
+function flip(){inner.classList.toggle('flip');}
+function next(){if(idx<order.length-1){idx++;render();}}
+function prev(){if(idx>0){idx--;render();}}
+function mark(type){const d=DATA[order[idx]];marks[d.n]=type;updateCounts();
+  document.querySelector('.card').className='card marked-'+type;setTimeout(next,260);}
+
+$('flip').onclick=flip;
+inner.onclick=flip;
+$('next').onclick=next;
+$('prev').onclick=prev;
+$('markK').onclick=()=>mark('known');
+$('markU').onclick=()=>mark('unknown');
+$('topic').onchange=applyFilter;
+$('zhToggle').onclick=function(){showZh=!showZh;this.textContent='中文題目：'+(showZh?'開':'關');this.style.color=showZh?'':'var(--muted)';render();};
+$('shuffle').onclick=()=>{for(let i=order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]];}idx=0;render();};
+$('reset').onclick=()=>{for(const k in marks)delete marks[k];render();};
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight')next();
+  else if(e.key==='ArrowLeft')prev();
+  else if(e.key===' '){e.preventDefault();flip();}
+  else if(e.key==='1')mark('unknown');
+  else if(e.key==='2')mark('known');
+});
+
+topics();
+render();
+</script>
+</body>
+</html>
